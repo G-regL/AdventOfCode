@@ -2,11 +2,14 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 )
+
+var flag_testData = flag.Bool("test", false, "Use Test dataset")
 
 // Stolen from https://stackoverflow.com/a/50694373/4483858
 func intersection(s1, s2 []string) (inter []string) {
@@ -46,8 +49,17 @@ func getPriority(item string) (priority int) {
 	return
 }
 func main() {
+	flag.Parse()
 
-	f, err := os.Open("input.txt")
+	filename := "input.txt"
+
+	if *flag_testData {
+		fmt.Println("***** USING TEST DATA *****")
+		filename = "test.txt"
+	}
+
+	f, err := os.Open(filename)
+
 	if err != nil {
 		log.Fatal(err)
 	}
