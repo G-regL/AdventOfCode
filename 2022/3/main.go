@@ -69,26 +69,24 @@ func main() {
 	total_1 := 0
 	total_2 := 0
 
-	var group []string
+	var group [][]string
 
 	for scanner.Scan() {
 		rucksack := scanner.Text()
-		group = append(group, rucksack)
+		group = append(group, strings.Split(rucksack, ""))
 
-		compartment_1 := strings.Split(rucksack[len(rucksack)/2:], "")
-		compartment_2 := strings.Split(rucksack[:len(rucksack)/2], "")
+		compartment_1 := strings.Split(rucksack[:len(rucksack)/2], "")
+		compartment_2 := strings.Split(rucksack[len(rucksack)/2:], "")
 		common_type := strings.Join(intersection(compartment_1, compartment_2), "")
 
 		//fmt.Println(compartment_1, len(compartment_1), " - ", compartment_2, len(compartment_2))
-
 		//fmt.Println(common_type, int(common_type[0]))
-
 		total_1 += getPriority(common_type)
 
 		if len(group) == 3 {
-			badge_1_2 := intersection(strings.Split(group[0], ""), strings.Split(group[1], ""))
+			badge_1_2 := intersection(group[0], group[1])
 			//fmt.Println(badge_1_2)
-			badge_group := intersection(badge_1_2, strings.Split(group[2], ""))
+			badge_group := intersection(badge_1_2, group[2])
 			//fmt.Println(badge_group)
 			total_2 += getPriority(badge_group[0])
 			group = nil
