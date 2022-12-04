@@ -35,15 +35,20 @@ func main() {
 	scanner := bufio.NewScanner(f)
 
 	total_1 := 0
-	//total_2 := 0
+	total_2 := 0
 
 	for scanner.Scan() {
 		pair := strings.Split(scanner.Text(), ",")
 		e1, e2 := strings.Split(pair[0], "-"), strings.Split(pair[1], "-")
 
-		//fmt.Println(e1, e2, (e1[0] <= e2[0] && e1[1] >= e2[1]), (e2[0] <= e1[0] && e2[1] >= e1[1]))
+		//fmt.Println(e1, e2, toint(e1[0]) <= toint(e2[0]) && toint(e1[1]) >= toint(e2[1])) || (toint(e2[0]) <= toint(e1[0]) && toint(e2[1]) >= toint(e1[1]))
 		if (toint(e1[0]) <= toint(e2[0]) && toint(e1[1]) >= toint(e2[1])) || (toint(e2[0]) <= toint(e1[0]) && toint(e2[1]) >= toint(e1[1])) {
 			total_1++
+		}
+
+		//fmt.Println(e1, e2, toint(e1[1]) >= toint(e2[0]) && toint(e1[0]) <= toint(e2[1]))
+		if toint(e1[1]) >= toint(e2[0]) && toint(e1[0]) <= toint(e2[1]) {
+			total_2++
 		}
 
 	}
@@ -52,5 +57,5 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Total for Puzzle #1:", total_1)
-	//fmt.Println("Total for Puzzle #2:", total_2)
+	fmt.Println("Total for Puzzle #2:", total_2)
 }
