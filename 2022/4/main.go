@@ -12,8 +12,11 @@ import (
 
 var flag_testData = flag.Bool("test", false, "Use Test dataset")
 
-func toint(str string) (retint int) {
-	retint, _ = strconv.Atoi(str)
+func toint(str []string) (retint []int) {
+	for _, e := range str {
+		i, _ := strconv.Atoi(e)
+		retint = append(retint, i)
+	}
 	return
 }
 func main() {
@@ -39,18 +42,17 @@ func main() {
 
 	for scanner.Scan() {
 		pair := strings.Split(scanner.Text(), ",")
-		e1, e2 := strings.Split(pair[0], "-"), strings.Split(pair[1], "-")
+		e1, e2 := toint(strings.Split(pair[0], "-")), toint(strings.Split(pair[1], "-"))
 
-		//fmt.Println(e1, e2, toint(e1[0]) <= toint(e2[0]) && toint(e1[1]) >= toint(e2[1])) || (toint(e2[0]) <= toint(e1[0]) && toint(e2[1]) >= toint(e1[1]))
-		if (toint(e1[0]) <= toint(e2[0]) && toint(e1[1]) >= toint(e2[1])) || (toint(e2[0]) <= toint(e1[0]) && toint(e2[1]) >= toint(e1[1])) {
+		//fmt.Println(e1, e2, e1[0] <= e2[0] && e1[1] >= e2[1]) || (e2[0] <= e1[0] && e2[1] >= e1[1])
+		if (e1[0] <= e2[0] && e1[1] >= e2[1]) || (e2[0] <= e1[0] && e2[1] >= e1[1]) {
 			total_1++
 		}
 
-		//fmt.Println(e1, e2, toint(e1[1]) >= toint(e2[0]) && toint(e1[0]) <= toint(e2[1]))
-		if toint(e1[1]) >= toint(e2[0]) && toint(e1[0]) <= toint(e2[1]) {
+		//fmt.Println(e1, e2, e1[1] >= e2[0] && e1[0] <= e2[1])
+		if e1[1] >= e2[0] && e1[0] <= e2[1] {
 			total_2++
 		}
-
 	}
 
 	if err := scanner.Err(); err != nil {
