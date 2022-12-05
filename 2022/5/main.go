@@ -10,25 +10,46 @@ import (
 )
 
 var flag_testData = flag.Bool("test", false, "Use Test dataset")
+var flag_verbose = flag.Bool("verbose", false, "Be verbose about logging")
+
+func verbose(str ...interface{}) {
+	if *flag_verbose == true {
+		fmt.Println(str...)
+	}
+	return
+}
 
 func MoveCrate(stacks [][]string, src int, dst int) {
+	verbose("CM9000: stacks", stacks)
 	//Identify which creates to move
 	crate := stacks[src-1][0]
+	verbose("CM9000: identified crates to move:", crate)
 	//... and remove from source stack
 	stacks[src-1] = stacks[src-1][1:]
 
 	//Put it on top of destination stack
+	verbose("CM9001: puts", crate, "on stack", dst)
 	stacks[dst-1] = append([]string{crate}, stacks[dst-1]...)
+	verbose("CM9000: stacks", stacks)
+}
+
 func MoveCrates(stacks [][]string, cnt int, src int, dst int) {
+	verbose("CM9001: stacks", stacks)
 	//Identify which creates to move
 	crates := stacks[src-1][0:cnt]
+	verbose("CM9001: identified crates to move:", crates)
 	//... and remove from source stack
+	verbose("CM9001: removes", crates, "from stack", src)
 	stacks[src-1] = stacks[src-1][cnt:]
+
 	//Put them on top of destination stack
+	verbose("CM9001: puts", crates, "on stack", dst)
 	// crates is resliced here such that its capacity is now equal to its length
 	// This guarantees that a new underlying array is always created for stacks9001[dst-1]
 	// --found at https://freshman.tech/snippets/go/concatenate-slices/
 	stacks[dst-1] = append(crates[:len(crates):len(crates)], stacks[dst-1]...)
+
+	verbose("CM9001: stacks", stacks)
 }
 
 func main() {
@@ -70,10 +91,13 @@ func main() {
 		move_src, _ := strconv.Atoi(moveparts[3])
 		move_dst, _ := strconv.Atoi(moveparts[5])
 
+		verbose(move)
 		for m := 1; m <= move_cnt; m++ {
 			MoveCrate(stacks_CM9000, move_src, move_dst)
 		}
+
 		MoveCrates(stacks_CM9001, move_cnt, move_src, move_dst)
+		verbose("---")
 	}
 
 	stacktops_1 := ""
