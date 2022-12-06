@@ -10,6 +10,13 @@ import (
 
 var flag_testData = flag.Bool("test", false, "Use Test dataset")
 
+func sumSlice(input []int) (sum int) {
+	for i := range input {
+		sum += input[i]
+	}
+	return
+}
+
 func main() {
 
 	flag.Parse()
@@ -28,15 +35,29 @@ func main() {
 	scanner := bufio.NewScanner(f)
 
 	previous := 1000000
-	increases := 0
+	depths := []int{}
+	increases_p1 := 0
+	increases_p2 := 0
 	for scanner.Scan() {
-		depth, _ := strconv.Atoi(scanner.Text())
-		if depth > previous {
-			increases++
+		d, _ := strconv.Atoi(scanner.Text())
+		if d > previous {
+			increases_p1++
 		}
-		previous = depth
+		previous = d
 
+		depths = append(depths, d)
 	}
 
-	fmt.Println("Depth increased", increases, "times")
+	previous = 1000000
+	for i := 0; i <= len(depths); i++ {
+		depth := sumSlice(depths[i : i+3])
+		if depth > previous {
+			increases_p2++
+		}
+		previous = depth
+	}
+
+	fmt.Println("P1 Depth increased", increases_p1, "times")
+	fmt.Println("P2 Depth increased", increases_p2, "times")
+
 }
