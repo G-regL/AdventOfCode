@@ -55,11 +55,6 @@ func main() {
 		_, SoPExists := startOfPacket[lineCounter]
 		for !SoPExists {
 			// Part 1
-			if pointer_p1 >= len(line) {
-				fmt.Println("No Start-of-Packet found :(")
-				break
-			}
-
 			if len(buffer_p1) == len(dedup(buffer_p1)) {
 				// capture pointer, and break out
 				startOfPacket[lineCounter] = pointer_p1
@@ -82,11 +77,11 @@ func main() {
 				fmt.Println("  Start-of-Signal found after character", startOfSignal[lineCounter])
 				break
 			} else {
-				if pointer_p2 >= len(line) {
-					buffer_p2 = buffer_p2[1:]
-				} else {
-					buffer_p2 = append(buffer_p2[1:], line[pointer_p2])
-				}
+				//if pointer_p2 >= len(line) {
+				//	buffer_p2 = buffer_p2[1:]
+				//} else {
+				buffer_p2 = append(buffer_p2[1:], line[pointer_p2])
+				//}
 				pointer_p2++
 			}
 			_, SoSExists = startOfSignal[lineCounter]
