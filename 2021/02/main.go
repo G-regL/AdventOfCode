@@ -33,8 +33,10 @@ func main() {
 
 	scanner := bufio.NewScanner(f)
 
-	xpos := 0
-	zpos := 0
+	horizontal := 0
+	depth_p1 := 0
+	depth_p2 := 0
+	aim := 0
 	direction := ""
 	distance := 0
 	for scanner.Scan() {
@@ -42,15 +44,18 @@ func main() {
 
 		switch direction {
 		case "forward":
-			xpos += distance
+			horizontal += distance
+			depth_p2 += aim * distance
 		case "up":
-			zpos -= distance
+			depth_p1 -= distance
+			aim -= distance
 		case "down":
-			zpos += distance
+			depth_p1 += distance
+			aim += distance
 		}
 	}
 
-	fmt.Println("P1 product:", xpos*zpos)
-	//fmt.Println("P2 Depth increased", increases_p2, "times")
+	fmt.Printf("P1 product: %-15d (h%d, d%d)\n", horizontal*depth_p1, horizontal, depth_p1)
+	fmt.Printf("P2 product: %-15d (h%d, d%d, a%d)\n", horizontal*depth_p2, horizontal, depth_p2, aim)
 
 }
