@@ -132,13 +132,25 @@ func main() {
 		//fmt.Println("CWD: ", currentWorkingDir)
 	}
 
-	sum := 0
-	for k, v := range structure {
-		fmt.Println(k, v)
+	sumP1 := 0
+	for _, v := range structure {
+		//fmt.Println(k, v)
 		if v <= 100000 {
-			sum += v
+			sumP1 += v
 		}
 	}
-	fmt.Println("sum:", sum)
+
+	fmt.Println("Part 1 sum:", sumP1)
+	//fmt.Println("Free Space:", 70000000-structure["/"])
+	//fmt.Println("Needed Space:", 30000000-(70000000-structure["/"]))
+
+	delete := 30000000
+	for _, v := range structure {
+		//fmt.Println(k, v)
+		if v >= 30000000-(70000000-structure["/"]) && v <= delete {
+			delete = v
+		}
+	}
+	fmt.Println("Part 2 directory size:", delete)
 
 }
