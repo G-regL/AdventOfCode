@@ -65,6 +65,7 @@ func main() {
 	grid := [][]int{}
 	grid_90 := [][]int{}
 	visible := 0
+
 	for lineNumber, row := range sfile {
 		grid = append(grid, []int{})
 		for column, tree_s := range strings.Split(string(row), "") {
@@ -86,32 +87,29 @@ func main() {
 		}
 	}
 
+	highestScenicScore := 0
 	for r := 1; r < len(grid)-1; r++ {
 		for c := 1; c < len(grid[r])-1; c++ {
 			//got a tree at grid[r][c]
 			tree := grid[r][c]
+			trees_left := grid[r][:c]
+			trees_right := grid[r][c+1:]
+			trees_up := grid_90[c][:r]
+			trees_down := grid_90[c][r+1:]
 
-			//check row
-			if isTaller(grid[r][:c], tree) || isTaller(grid[r][c+1:], tree) || isTaller(grid_90[c][:r], tree) || isTaller(grid_90[c][r+1:], tree) {
+			//check for visibility
+			if isTaller(trees_left, tree) || isTaller(trees_right, tree) || isTaller(trees_up, tree) || isTaller(trees_down, tree) {
 				visible++
 			}
-		}
-	}
 
-	highestScenicScore := 0
-	for r := 0; r < len(grid); r++ {
-		for c := 0; c < len(grid[r]); c++ {
-			//got a tree at grid[r][c]
-			tree := grid[r][c]
-
-			treeScenicScore := getScore(reverse(grid[r][:c]), tree) * getScore(grid[r][c+1:], tree) * getScore(reverse(grid_90[c][:r]), tree) * getScore(grid_90[c][r+1:], tree)
-
+			// calculate tree score
+			treeScenicScore := getScore(reverse(trees_left), tree) * getScore(trees_right, tree) * getScore(reverse(trees_up), tree) * getScore(trees_down, tree)
 			if treeScenicScore > highestScenicScore {
+				// ... and update highest if it's bigger than current highest
 				highestScenicScore = treeScenicScore
 			}
 		}
 	}
-
 	fmt.Println("Visible Trees:", visible)
 	fmt.Println("highest scenic score:", highestScenicScore)
 }
