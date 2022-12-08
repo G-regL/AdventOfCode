@@ -62,19 +62,13 @@ func main() {
 
 	sfile := strings.Split(string(bfile), "\n")
 
-	//fmt.Println("len_sfile:", len(sfile))
-
-	//grid := map[int]map[int]int{}
-	//grid_90 := map[int]map[int]int{}
 	grid := [][]int{}
 	grid_90 := [][]int{}
 	visible := 0
 	for lineNumber, row := range sfile {
-		//fmt.Println("line:", lineNumber, strings.Split(string(row), ""))
 		grid = append(grid, []int{})
 		for column, tree_s := range strings.Split(string(row), "") {
 			tree_i, _ := strconv.Atoi(tree_s)
-			//fmt.Println("  column", column)
 			grid[lineNumber] = append(grid[lineNumber], tree_i)
 			if len(grid_90) <= column {
 				grid_90 = append(grid_90, []int{})
@@ -87,33 +81,20 @@ func main() {
 			// first and last row
 			visible += len(string(row))
 		} else {
-			// first and last tree
+			// first and last tree of each row
 			visible += 2
 		}
 	}
-
-	//fmt.Println("grid:", grid)
-	//fmt.Println("grid_90:", grid_90)
 
 	for r := 1; r < len(grid)-1; r++ {
 		for c := 1; c < len(grid[r])-1; c++ {
 			//got a tree at grid[r][c]
 			tree := grid[r][c]
-			//fmt.Printf("tree at (%d,%d) is height %d\n", r, c, tree)
 
 			//check row
 			if isTaller(grid[r][:c], tree) || isTaller(grid[r][c+1:], tree) || isTaller(grid_90[c][:r], tree) || isTaller(grid_90[c][r+1:], tree) {
-				//fmt.Printf("tree at (%d,%d) with height %d is taller\n", r, c, tree)
 				visible++
 			}
-			//fmt.Printf("tree at (%d,%d) with height %d is smaller\n", r, c, tree)
-			////fmt.Println("row ", tree, grid[r][:c], isTaller(grid[r][:c], tree))
-			////fmt.Println("row ", tree, grid[r][c:], isTaller(grid[r][c:], tree))
-			//fmt.Println("   row: ", isTaller(grid[r][:c], tree), grid[r][:c], "", tree, ">", grid[r][c+1:], isTaller(grid[r][c+1:], tree))
-			////fmt.Println("col ", tree, grid_90[c][:r], isTaller(grid_90[c][:r], tree))
-			////fmt.Println("col ", tree, grid_90[c][r:], isTaller(grid_90[c][r:], tree))
-			//fmt.Println("   col: ", isTaller(grid_90[c][:r], tree), grid_90[c][:r], "", tree, "", grid_90[c][r+1:], isTaller(grid_90[c][r+1:], tree))
-
 		}
 	}
 
@@ -124,22 +105,13 @@ func main() {
 			tree := grid[r][c]
 
 			treeScenicScore := getScore(reverse(grid[r][:c]), tree) * getScore(grid[r][c+1:], tree) * getScore(reverse(grid_90[c][:r]), tree) * getScore(grid_90[c][r+1:], tree)
-			//fmt.Printf("tree at (%d,%d) with height %d has scenic score of %d\n", r, c, tree, treeScenicScore)
-			////fmt.Println("row ", reverse(grid[r][:c]), tree, getScore(reverse(grid[r][:c]), tree))
-			////fmt.Println("row ", tree, grid[r][c+1:], getScore(grid[r][c+1:], tree))
-			//fmt.Println("row", grid[r][:c], tree, grid[r][c+1:], getScore(reverse(grid[r][:c]), tree), getScore(grid[r][c+1:], tree))
-			////fmt.Println("col ", reverse(grid_90[c][:r]), tree, getScore(reverse(grid_90[c][:r]), tree))
-			////fmt.Println("col ", tree, grid_90[c][r+1:], getScore(grid_90[c][r+1:], tree))
-			//fmt.Println("col", grid_90[c][:r], tree, grid_90[c][r+1:], getScore(reverse(grid_90[c][:r]), tree), getScore(grid_90[c][r+1:], tree))
 
 			if treeScenicScore > highestScenicScore {
 				highestScenicScore = treeScenicScore
 			}
-
 		}
 	}
 
 	fmt.Println("Visible Trees:", visible)
 	fmt.Println("highest scenic score:", highestScenicScore)
-
 }
