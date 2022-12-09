@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var flag_testData = flag.Bool("test", false, "Use Test dataset")
@@ -47,6 +48,7 @@ func reverse(src []int) (out []int) {
 }
 
 func main() {
+	start := time.Now()
 
 	flag.Parse()
 	filename := "input.txt"
@@ -88,6 +90,7 @@ func main() {
 	}
 
 	highestScenicScore := 0
+	//loop through tree grids, skipping first and last rows/columns
 	for r := 1; r < len(grid)-1; r++ {
 		for c := 1; c < len(grid[r])-1; c++ {
 			//got a tree at grid[r][c]
@@ -102,7 +105,8 @@ func main() {
 				visible++
 			}
 
-			// calculate tree score
+			// Calculate tree scores
+			//  the outer for loops skip first and last rows/columns, but it's very unlikely that one of those would have the higest score
 			treeScenicScore := getScore(reverse(trees_left), tree) * getScore(trees_right, tree) * getScore(reverse(trees_up), tree) * getScore(trees_down, tree)
 			if treeScenicScore > highestScenicScore {
 				// ... and update highest if it's bigger than current highest
@@ -112,4 +116,7 @@ func main() {
 	}
 	fmt.Println("Visible Trees:", visible)
 	fmt.Println("highest scenic score:", highestScenicScore)
+
+	elapsed := time.Since(start)
+	fmt.Printf("Took %s\n", elapsed)
 }
