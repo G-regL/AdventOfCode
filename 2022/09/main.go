@@ -23,8 +23,9 @@ func dedup(in []string) (out []string) {
 	return
 }
 
-func moveKnot(tail map[string]int, head map[string]int) map[string]int {
+func moveKnot(tail, head map[string]int) map[string]int {
 
+	//// original algorithm borrowed from Joe
 	// x_diff := head["x"] - tail["x"]
 	// y_diff := head["y"] - tail["y"]
 
@@ -36,7 +37,7 @@ func moveKnot(tail map[string]int, head map[string]int) map[string]int {
 	// 	tail["x"] = tail["x"] + (x_diff / 2)
 	// }
 
-	// new positions algorithm taken from function `moveOne` in https://github.com/jasontconnell/advent/blob/master/2022/09/main.go
+	// new algorithm borrowed from function `moveOne` in https://github.com/jasontconnell/advent/blob/master/2022/09/main.go
 	if dist2(head, tail) > 1 {
 
 		tdx, tdy := 0, 0
@@ -72,7 +73,7 @@ func moveKnot(tail map[string]int, head map[string]int) map[string]int {
 	return tail
 }
 
-func getMax(max map[string]int, head1 map[string]int, head2 map[string]int, tail map[string]int, knot9 map[string]int) map[string]int {
+func getMax(max, head1, head2, tail, knot9 map[string]int) map[string]int {
 	//max = map[string]int{"x": 0, "y": 0}
 
 	card := []string{"x", "y"}
@@ -105,112 +106,8 @@ func dist2(p1, p2 map[string]int) int {
 	return 1
 }
 
-// //taken from https://github.com/jasontconnell/advent/blob/master/2022/09/main.go
-// // ----------------------------------
-
-// type dir string
-
-// const (
-// 	U dir = "U"
-// 	D dir = "D"
-// 	L dir = "L"
-// 	R dir = "R"
-// )
-
-// type move struct {
-// 	dir dir
-// 	num int
-// }
-
-// type xy struct {
-// 	x, y int
-// }
-
-// func traverse(moves []move, n int) int {
-// 	pos := make([]xy, n)
-// 	visit := make([]map[xy]int, n)
-// 	for i := 0; i < n; i++ {
-// 		pos[i] = xy{}
-// 		visit[i] = make(map[xy]int)
-// 		visit[i][pos[i]] = 1
-// 	}
-
-// 	for _, mv := range moves {
-// 		for i := 0; i < mv.num; i++ {
-// 			moveOne(mv.dir, pos, visit)
-// 		}
-// 	}
-
-// 	return len(visit[n-1])
-// }
-
-// func moveOne(d dir, pos []xy, visit []map[xy]int) {
-// 	var dx, dy int
-// 	switch d {
-// 	case U:
-// 		dy = 1
-// 	case D:
-// 		dy = -1
-// 	case L:
-// 		dx = -1
-// 	case R:
-// 		dx = 1
-// 	}
-
-// 	pos[0].x += dx
-// 	pos[0].y += dy
-// 	visit[0][pos[0]]++
-
-// 	for i := 1; i < len(pos); i++ {
-// 		fpos, bpos := pos[i-1], pos[i]
-// 		if dist(fpos, bpos) > 1 {
-// 			tdx, tdy := 0, 0
-
-// 			if bpos.y > fpos.y {
-// 				tdy = 1
-// 			} else if bpos.y < fpos.y {
-// 				tdy = -1
-// 			}
-
-// 			if bpos.x > fpos.x {
-// 				tdx = -1
-// 			} else if bpos.x < fpos.x {
-// 				tdx = 1
-// 			}
-
-// 			// take care of diagonal
-// 			if bpos.x < fpos.x {
-// 				tdx = 1
-// 			} else if bpos.x > fpos.x {
-// 				tdx = -1
-// 			}
-
-// 			if bpos.y < fpos.y {
-// 				tdy = 1
-// 			} else if bpos.y > fpos.y {
-// 				tdy = -1
-// 			}
-
-// 			pos[i].x += tdx
-// 			pos[i].y += tdy
-// 			visit[i][pos[i]]++
-// 		}
-// 	}
-// }
-
-// func dist(p1, p2 xy) int {
-// 	y := math.Abs(float64(p2.y - p1.y))
-// 	x := math.Abs(float64(p2.x - p1.x))
-// 	if y > 1 || x > 1 { //1,1 is diagonal but still touching
-// 		return int(y + x)
-// 	}
-// 	return 1
-// }
-
-// // -----------------------------------
-
 func buildGrid(knots map[int]map[string]int, max map[string]int) {
-	for y := 0; y <= max["y"]; y++ {
+	for y := max["y"]; y == 0; y-- {
 		for x := 0; x <= max["x"]; x++ {
 			cell := "."
 			if knots[0]["x"] == x && knots[0]["y"] == y {
@@ -259,7 +156,6 @@ func main() {
 	positions_p2 := []string{}
 
 	head_p1 := map[string]int{"x": 0, "y": 0}
-	//head_p2 := map[string]int{"x": 0, "y": 0}
 	tail_p1 := map[string]int{"x": 0, "y": 0}
 	knots_p1 := map[int]map[string]int{
 		0: {"x": 0, "y": 0}, //head
@@ -272,25 +168,12 @@ func main() {
 		7: {"x": 0, "y": 0}, 8: {"x": 0, "y": 0}, 9: {"x": 0, "y": 0},
 	}
 
-	//moves := []move{}
-
 	for _, line := range sfile {
-		// //taken from https://github.com/jasontconnell/advent/blob/master/2022/09/main.go
-		// // ------------
-		// sp := strings.Split(line, " ")
-		// if len(sp) == 2 {
-		// 	d := dir(sp[0])
-		// 	n, _ := strconv.Atoi(sp[1])
-		// 	moves = append(moves, move{dir: d, num: n})
-		// }
-		// // ------------
 
-		//fmt.Println("---", line, "---")
 		direction := ""
 		distance := 0
 		_, _ = fmt.Sscanf(line, "%s %d", &direction, &distance)
 
-		//head_p2_moved := false
 		for i := 1; i <= distance; i++ {
 			if direction == "U" {
 				head_p1["y"] += 1
@@ -308,24 +191,23 @@ func main() {
 
 			tail_p1 = moveKnot(tail_p1, head_p1)
 
-			//knots[1] = moveKnot(knots[1], head_p2)
 			for k := 1; k < len(knots); k++ {
 				knots[k] = moveKnot(knots[k], knots[k-1])
 			}
 
-			//fmt.Printf("%d:%d\n", tail_p1["x"], tail_p1["y"])
 			positions_p1 = append(positions_p1, fmt.Sprintf("%d:%d", tail_p1["x"], tail_p1["y"]))
 			positions_p2 = append(positions_p2, fmt.Sprintf("%d:%d", knots[9]["x"], knots[9]["y"]))
 
 			max = getMax(max, head_p1, knots[0], tail_p1, knots[9])
 
 		}
-		//fmt.Printf("%d:%d\n", knots[9]["x"], knots[9]["y"])
 
 		knots_p1[0] = head_p1
 		knots_p1[1] = tail_p1
 
 		if *flag_testData {
+			fmt.Println("\n------------")
+			fmt.Println("---", line, "---")
 			buildGrid(knots_p1, max)
 		} else if *flag_testData2 {
 			buildGrid(knots, max)
@@ -336,17 +218,13 @@ func main() {
 	//fmt.Println(knots)
 	if *flag_testData {
 		fmt.Println("Unique Positions P1:", len(dedup(positions_p1)))
-		//fmt.Println("Unique Positions P1-cheat:", traverse(moves, 2))
 		fmt.Println("Unique Positions P2: N/A")
 	} else if *flag_testData2 {
 		fmt.Println("Unique Positions P1: N/A")
 		fmt.Println("Unique Positions P2:", len(dedup(positions_p2)))
-		//fmt.Println("Unique Positions P2-cheat:", traverse(moves, 10))
 	} else {
 		fmt.Println("Unique Positions P1:", len(dedup(positions_p1)))
 		fmt.Println("Unique Positions P2:", len(dedup(positions_p2)))
-		//fmt.Println("Unique Positions P1-cheat:", traverse(moves, 2))
-		//fmt.Println("Unique Positions P2-cheat:", traverse(moves, 10))
 	}
 
 	elapsed := time.Since(start)
