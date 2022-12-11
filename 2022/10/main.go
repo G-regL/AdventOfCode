@@ -36,7 +36,6 @@ func main() {
 
 	sfile := strings.Split(string(bfile), "\n")
 
-	//instructions := []Instruction{}
 	stack := []Operation{}
 
 	cycle := 0
@@ -44,7 +43,6 @@ func main() {
 		value := 0
 		instruction := ""
 		_, _ = fmt.Sscanf(line, "%s %d", &instruction, &value)
-		//instructions = append(instructions, Instruction{operation: ins, amount: value})
 		thisins := Instruction{operation: instruction, amount: value}
 		if thisins.operation == "addx" {
 			stack = append(stack, Operation{ins: thisins, cycle: cycle + 2})
@@ -55,15 +53,23 @@ func main() {
 		cycle++
 
 	}
-	//fmt.Println(instructions)
-
-	fmt.Println(stack)
 
 	breakPoints := map[int]int{20: 0, 60: 0, 100: 0, 140: 0, 180: 0, 220: 0}
 	register := 1
 	cycle_run := 0
+	pixels := [][]string{}
+	crtBreaks := map[int]bool{1: true, 41: true, 81: true, 121: true, 161: true, 201: true}
+	crtLine := 0
+	linepos := 0
+
+	pixels = append(pixels, []string{})
 	for len(stack) > 0 {
-		fmt.Println("c:", cycle_run, " start; register:", register)
+		if _, ok := crtBreaks[cycle_run+1]; ok {
+			linepos = 0
+			pixels = append(pixels, []string{})
+			crtLine++
+		}
+
 		this := stack[0]
 		if _, ok := breakPoints[cycle_run]; ok {
 			breakPoints[cycle_run] = register
@@ -76,24 +82,28 @@ func main() {
 
 			stack = stack[1:]
 		}
+		if register-1 == linepos || register == linepos || register+1 == linepos {
+			pixels[crtLine] = append(pixels[crtLine], "#")
+		} else {
+			pixels[crtLine] = append(pixels[crtLine], ".")
+		}
 
-		fmt.Println("c:", cycle_run, " end; register:", register)
 		cycle_run++
+		linepos++
 	}
-
-	fmt.Println("breakPoint:", breakPoints)
 
 	sum := 0
 	for b, s := range breakPoints {
 		sum += b * s
-
-		fmt.Println("breakPoint:", b, s, b*s)
 	}
-	fmt.Println("sum:", sum)
+	fmt.Println("Part 1 Sum:", sum)
+	fmt.Printf("Part 2 CRT output:")
+	for _, r := range pixels {
+		for _, p := range r {
+			fmt.Printf("%s", p)
+		}
+		fmt.Printf("\n")
+	}
 
-	//fmt.Println("Visible Trees:", visible)
-	//fmt.Println("highest scenic score:", highestScenicScore)
-
-	elapsed := time.Since(start)
-	fmt.Printf("Took %s\n", elapsed)
+	fmt.Printf("Took %s\n", time.Since(start))
 }

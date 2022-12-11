@@ -328,3 +328,7 @@ Allowing the program to run to completion causes the CRT to produce the followin
 ```
 
 Render the image given by your program. **What eight capital letters appear on your CRT?**
+
+Your puzzle answer was `EALGULPG`.
+
+__Both parts of this puzzle are complete! They provide two gold stars: **__
