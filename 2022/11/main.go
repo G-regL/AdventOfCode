@@ -183,15 +183,15 @@ func main() {
 		// for mID, Monkey := range Monkeys {
 		// 	fmt.Printf("Monkey %d: %d\n", mID, Monkey.items)
 		// }
-		if round_p1 == 1 || round_p1 == 20 {
-			fmt.Printf("----- Round Part 2 - %2d -----\n", round_p1)
-			for mID, count := range inspectedItems_p1 {
-				fmt.Printf("Monkey %d inspected items %d times.\n", mID, count)
-			}
-		}
+		// if round_p1 == 1 || round_p1 == 20 {
+		// 	fmt.Printf("----- Round Part 1 - %2d -----\n", round_p1)
+		// 	for mID, count := range inspectedItems_p1 {
+		// 		fmt.Printf("Monkey %d inspected items %d times.\n", mID, count)
+		// 	}
+		// }
 	}
 
-	fmt.Println("\n-----------------------")
+	//fmt.Println("\n-----------------------")
 
 	// There was *no* way I was going to get this without reading this reddit post:
 	// https://www.reddit.com/r/adventofcode/comments/ziyd5u/comment/iztfur8/?utm_source=share&utm_medium=web2x&context=3
@@ -233,7 +233,6 @@ func main() {
 	sort.Ints(inspectedItems_p2)
 
 	// Show us what we've got!
-	fmt.Println("\n-----------------------")
 	fmt.Println("Part 1 Monkey Business:", inspectedItems_p1[len(inspectedItems_p1)-1]*inspectedItems_p1[len(inspectedItems_p1)-2])
 	fmt.Println("Part 2 Monkey Business:", inspectedItems_p2[len(inspectedItems_p2)-1]*inspectedItems_p2[len(inspectedItems_p2)-2])
 
