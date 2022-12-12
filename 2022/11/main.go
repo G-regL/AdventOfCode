@@ -110,6 +110,7 @@ func main() {
 	Monkeys := make([]Monkey, len(inputMonkeys))
 	Monkeys_p2 := make([]Monkey, len(inputMonkeys))
 	divisors := make([]int, len(inputMonkeys))
+	foobar := 1
 
 	for num, m := range inputMonkeys {
 		props := strings.Split(m, "\n")
@@ -135,6 +136,7 @@ func main() {
 
 		_, _ = fmt.Sscanf(props[3], "  Test: divisible by %d", &Monkeys[num].testDivisor)
 		divisors[num] = Monkeys[num].testDivisor
+		foobar *= Monkeys[num].testDivisor
 
 		_, _ = fmt.Sscanf(props[4], "    If true: throw to monkey %d", &Monkeys[num].destTrue)
 		_, _ = fmt.Sscanf(props[5], "    If false: throw to monkey %d", &Monkeys[num].destFalse)
@@ -198,6 +200,7 @@ func main() {
 	// That led me to https://siongui.github.io/2017/06/03/go-find-lcm-by-gcd/
 	// Which then gave me the the below line, and the "LCM" it calls as the new worryLevel reducer
 	lcm := LCM(divisors[0], divisors[1], divisors[2:]...)
+	// could also get this by '*='-ing each divisor when building the Monkeys slice - a la 'foobar' var above
 
 	inspectedItems_p2 := make([]int, len(inputMonkeys))
 	for round_p2 := 1; round_p2 <= 10000; round_p2++ {
