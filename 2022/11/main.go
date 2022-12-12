@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math/big"
 	"os"
 	"sort"
 	"strconv"
@@ -15,7 +14,7 @@ import (
 var flag_testData = flag.Bool("test", false, "Use Test dataset")
 
 type Monkey struct {
-	items       []*big.Int
+	items       []int
 	opType      string
 	opNumber    int
 	testDivisor int
@@ -26,14 +25,6 @@ type Monkey struct {
 func toInt(in string) (out int) {
 	out, _ = strconv.Atoi(in)
 	return out
-}
-
-func toBigInt(in string) (out *big.Int) {
-	out, ok := new(big.Int).SetString(in, 0)
-	if ok {
-		return
-	}
-	return
 }
 
 func showMonkeys(monkeys []Monkey) {
@@ -51,17 +42,17 @@ func showMonkeys(monkeys []Monkey) {
 	}
 }
 
-func updateWorryLevel(m Monkey, item *big.Int) (wl big.Int, text string) {
-	n := big.NewInt(int64(m.opNumber))
-	if n == big.NewInt(int64(-1)) {
+func updateWorryLevel(m Monkey, item int) (wl int, text string) {
+	n := m.opNumber
+	if n == -1 {
 		n = item
 	}
 
 	if m.opType == "*" {
-		wl.Mul(item, n)
+		wl = item * n
 		text = fmt.Sprintf("    Worry level is multiplied by %d to %d.", n, wl)
 	} else if m.opType == "+" {
-		wl.Add(item, n)
+		wl = item + n
 		text = fmt.Sprintf("    Worry level increases  by %d to %d.", n, wl)
 	} else {
 		log.Fatal("Unknown operator", m.opType, "in updateWorryLevel")
@@ -69,6 +60,30 @@ func updateWorryLevel(m Monkey, item *big.Int) (wl big.Int, text string) {
 	}
 	return
 }
+
+// ----------- Taken from https://siongui.github.io/2017/06/03/go-find-lcm-by-gcd/
+// greatest common divisor (GCD) via Euclidean algorithm
+func GCD(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+// find Least Common Multiple (LCM) via GCD
+func LCM(a, b int, integers ...int) int {
+	result := a * b / GCD(a, b)
+
+	for i := 0; i < len(integers); i++ {
+		result = LCM(result, integers[i])
+	}
+
+	return result
+}
+
+// -----------
 
 func main() {
 	start := time.Now()
@@ -94,6 +109,7 @@ func main() {
 
 	Monkeys := make([]Monkey, len(inputMonkeys))
 	Monkeys_p2 := make([]Monkey, len(inputMonkeys))
+	divisors := make([]int, len(inputMonkeys))
 
 	for num, m := range inputMonkeys {
 		props := strings.Split(m, "\n")
@@ -106,7 +122,7 @@ func main() {
 		//_, _ = fmt.Sscanf(props[1], "  Starting items: %s", &items)
 		//fmt.Println(items)
 		for _, i := range strings.Split(items[1], ", ") {
-			Monkeys[num].items = append(Monkeys[num].items, toBigInt(i))
+			Monkeys[num].items = append(Monkeys[num].items, toInt(i))
 		}
 
 		opNumber := ""
@@ -118,6 +134,7 @@ func main() {
 		}
 
 		_, _ = fmt.Sscanf(props[3], "  Test: divisible by %d", &Monkeys[num].testDivisor)
+		divisors[num] = Monkeys[num].testDivisor
 
 		_, _ = fmt.Sscanf(props[4], "    If true: throw to monkey %d", &Monkeys[num].destTrue)
 		_, _ = fmt.Sscanf(props[5], "    If false: throw to monkey %d", &Monkeys[num].destFalse)
@@ -143,18 +160,18 @@ func main() {
 				//worryLevel, wlText := updateWorryLevel(Monkey, Item)
 				//fmt.Println(wlText)
 
-				worryLevel.Div(&worryLevel, big.NewInt(3))
+				worryLevel = worryLevel / 3
 				//fmt.Printf("    Monkey gets bored with item. Worry level is divided by 3 to %d.\n", worryLevel)
+
 				//remainder := worryLevel % 23
-				remainder := new(big.Int).Mod(&worryLevel, big.NewInt(int64(Monkey.testDivisor)))
-				if remainder == big.NewInt(0) {
+				if worryLevel%Monkey.testDivisor == 0 {
 					//fmt.Printf("    Current worry level is divisible by %d.\n", Monkey.testDivisor)
 					//fmt.Printf("    Item with worry level %d is thrown to monkey %d.\n", worryLevel, Monkey.destTrue)
-					Monkeys[Monkey.destTrue].items = append(Monkeys[Monkey.destTrue].items, &worryLevel)
+					Monkeys[Monkey.destTrue].items = append(Monkeys[Monkey.destTrue].items, worryLevel)
 				} else {
 					//fmt.Printf("    Current worry level is not divisible by %d.\n", Monkey.testDivisor)
 					//fmt.Printf("    Item with worry level %d is thrown to monkey %d.\n", worryLevel, Monkey.destFalse)
-					Monkeys[Monkey.destFalse].items = append(Monkeys[Monkey.destFalse].items, &worryLevel)
+					Monkeys[Monkey.destFalse].items = append(Monkeys[Monkey.destFalse].items, worryLevel)
 				}
 
 				Monkeys[mID].items = Monkeys[mID].items[1:]
@@ -176,8 +193,14 @@ func main() {
 
 	fmt.Println("\n-----------------------")
 
+	// There was *no* way I was going to get this without reading this reddit post:
+	// https://www.reddit.com/r/adventofcode/comments/ziyd5u/comment/iztfur8/?utm_source=share&utm_medium=web2x&context=3
+	// That led me to https://siongui.github.io/2017/06/03/go-find-lcm-by-gcd/
+	// Which then gave me the the below line, and the "LCM" it calls as the new worryLevel reducer
+	lcm := LCM(divisors[0], divisors[1], divisors[2:]...)
+
 	inspectedItems_p2 := make([]int, len(inputMonkeys))
-	for round_p2 := 1; round_p2 <= 2000; round_p2++ {
+	for round_p2 := 1; round_p2 <= 10000; round_p2++ {
 		for mID, Monkey := range Monkeys_p2 {
 			inspectedItems_p2[mID] += len(Monkey.items)
 			for _, Item := range Monkey.items {
@@ -186,25 +209,24 @@ func main() {
 				//worryLevel, wlText := updateWorryLevel(Monkey, Item)
 				//fmt.Println(wlText)
 
-				//worryLevel = worryLevel
+				worryLevel = worryLevel % lcm
 
-				remainder := new(big.Int).Mod(&worryLevel, big.NewInt(int64(Monkey.testDivisor)))
-				if remainder == big.NewInt(0) {
-					Monkeys_p2[Monkey.destTrue].items = append(Monkeys_p2[Monkey.destTrue].items, &worryLevel)
+				if worryLevel%Monkey.testDivisor == 0 {
+					Monkeys_p2[Monkey.destTrue].items = append(Monkeys_p2[Monkey.destTrue].items, worryLevel)
 				} else {
-					Monkeys_p2[Monkey.destFalse].items = append(Monkeys_p2[Monkey.destFalse].items, &worryLevel)
+					Monkeys_p2[Monkey.destFalse].items = append(Monkeys_p2[Monkey.destFalse].items, worryLevel)
 				}
 
 				Monkeys_p2[mID].items = Monkeys_p2[mID].items[1:]
 			}
 		}
-		if round_p2 == 1 || round_p2 == 20 || round_p2%1000 == 0 {
-			fmt.Printf("----- Round Part 2 - %2d -----\n", round_p2)
-			for mID, count := range inspectedItems_p2 {
-				fmt.Printf("Monkey %d inspected items %d times.\n", mID, count)
-				//fmt.Println("items:", Monkeys_p2[mID].items)
-			}
-		}
+		// if round_p2 == 1 || round_p2 == 20 || round_p2%1000 == 0 {
+		// 	fmt.Printf("----- Round Part 2 - %2d -----\n", round_p2)
+		// 	for mID, count := range inspectedItems_p2 {
+		// 		fmt.Printf("Monkey %d inspected items %d times.\n", mID, count)
+		// 		//fmt.Println("items:", Monkeys_p2[mID].items)
+		// 	}
+		// }
 	}
 
 	sort.Ints(inspectedItems_p1)
@@ -213,5 +235,8 @@ func main() {
 	// Show us what we've got!
 	fmt.Println("\n-----------------------")
 	fmt.Println("Part 1 Monkey Business:", inspectedItems_p1[len(inspectedItems_p1)-1]*inspectedItems_p1[len(inspectedItems_p1)-2])
+	fmt.Println("Part 2 Monkey Business:", inspectedItems_p2[len(inspectedItems_p2)-1]*inspectedItems_p2[len(inspectedItems_p2)-2])
+
 	fmt.Printf("Took %s\n", time.Since(start))
+
 }
