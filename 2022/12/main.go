@@ -1,43 +1,46 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"math"
 	"os"
-	"strconv"
-	"strings"
 	"time"
-
-	"github.com/yourbasic/graph"
 )
 
 var flag_testData = flag.Bool("test", false, "Use Test dataset")
 
-type point struct {
-	x      int
-	y      int
-	height int
+// type point struct {
+// 	x      int
+// 	y      int
+// 	height int
+// }
+
+// func toInt(in string) (out int) {
+// 	out, _ = strconv.Atoi(in)
+// 	return out
+// }
+
+// func getPoint(points []point, x, y int) (out int) {
+// 	for id, p := range points {
+// 		if p.x == x && p.y == y {
+// 			return id
+// 		}
+// 	}
+// 	return
+
+// }
+
+type coord struct {
+	x, y int
 }
 
-func toInt(in string) (out int) {
-	out, _ = strconv.Atoi(in)
-	return out
-}
-
-func getPoint(points []point, x, y int) (out int) {
-	for id, p := range points {
-		if p.x == x && p.y == y {
-			return id
-		}
+func min(a, b int) int {
+	if a < b {
+		return a
 	}
-	return
-
-}
-
-func bfsMoves(v, start int) {
-
+	return b
 }
 
 func main() {
@@ -52,152 +55,111 @@ func main() {
 		filename = "test.txt"
 	}
 
-	// Read in file as bytes, and convert to a string.
-	bfile, err := os.ReadFile(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	sfile := string(bfile)
+	f, _ := os.Open(filename)
 
-	// Split the file into the stack definitions, and moves
-	lines := strings.Split(sfile, "\n")
+	//bulk of today's code is taken from https://github.com/Nikscorp/advent_of_code_2022/blob/master/days/day12.go
+	// I don't really get how it works, but I'm certain that given enough time I could work it out..
 
-	points := []point{}
-	startPoint := point{}
-	endPoint := point{}
-	//lineLength := len(lines[0])
-	minSteps := math.MaxInt
-
-	for lineNumber, line := range lines {
-		//heightMap = appendmake([]int, len([]rune(l)))
-		//chars := strings.Split(line, "\n")
-		chars := []rune(line)
-		for charNumber, char := range chars {
-			points = append(points, point{x: charNumber, y: lineNumber, height: int(char) - 96})
-			if char == 'S' {
-				points[len(points)-1].height = int('a') - 96
-				startPoint = points[len(points)-1]
-			} else if char == 'E' {
-				points[len(points)-1].height = int('z') - 96
-				endPoint = points[len(points)-1]
-			}
+	reader := bufio.NewReader(f)
+	grid := make([][]byte, 0)
+	for {
+		var line string
+		_, err := fmt.Fscanf(reader, "%s\n", &line)
+		if err != nil {
+			break
 		}
-
+		grid = append(grid, []byte(line))
 	}
 
-	//fmt.Println(startPoint, endPoint)
-	//fmt.Println(points)
+	var (
+		starts_p1 coord
+		starts_p2 []coord
+		end       coord
+	)
 
-	diffHeightCost := int64(0)
-	sameHeightCost := int64(1)
-
-	g := graph.New(len(points))
-	//thisCost := int64(0)
-	for id, p := range points {
-
-		// point to the right
-		right_id := getPoint(points, p.x+1, p.y)
-		right_pt := points[right_id]
-		if p.y == right_pt.y && !g.Edge(right_id, id) {
-			right_diff := right_pt.height - p.height
-			if right_diff == 0 {
-				g.AddCost(id, right_id, sameHeightCost)
-				fmt.Printf("adding %d cost > edge for points %d, %d\n", sameHeightCost, id, right_id)
-				//thisCost = sameHeightCost
-			} else if right_diff == 1 {
-				g.AddCost(id, right_id, diffHeightCost)
-				fmt.Printf("adding %d cost > edge for points %d, %d\n", diffHeightCost, id, right_id)
-				//thisCost = diffHeightCost
+	for i := range grid {
+		for j := range grid[i] {
+			//if grid[i][j] == 'S' || grid[i][j] == 'a' { // or just grid[i][j] == 'S' for task 1
+			//if grid[i][j] == 'S' { // or just grid[i][j] == 'S' for task 1
+			if grid[i][j] == 'S' {
+				starts_p1 = coord{i, j}
+				starts_p2 = append(starts_p2, coord{i, j})
+			} else if grid[i][j] == 'a' {
+				starts_p2 = append(starts_p2, coord{i, j})
+			} else if grid[i][j] == 'E' {
+				end = coord{i, j}
 			}
-			//  else {
-			// 	g.AddCost(id, right_id, int64(right_diff))
-			// 	fmt.Printf("adding %d cost > edge for points %d, %d\n", right_diff, id, right_id)
-			// }
-
 		}
-
-		left_id := getPoint(points, p.x-1, p.y)
-		left_pt := points[left_id]
-		if left_pt.y == p.y && !g.Edge(left_id, id) {
-			left_diff := left_pt.height - p.height
-			if left_diff == 0 {
-				g.AddCost(id, left_id, sameHeightCost)
-				fmt.Printf("adding %d cost < edge for points %d, %d\n", sameHeightCost, id, left_id)
-				//thisCost = sameHeightCost
-			} else if left_diff == 1 {
-				g.AddCost(id, left_id, diffHeightCost)
-				fmt.Printf("adding %d cost < edge for points %d, %d\n", diffHeightCost, id, left_id)
-				//thisCost = diffHeightCost
-			}
-			//  else {
-			// 	g.AddCost(id, left_id, int64(left_diff))
-			// 	fmt.Printf("adding %d cost < edge for points %d, %d\n", left_diff, id, left_id)
-			// }
-		}
-
-		up_id := getPoint(points, p.x, p.y-1)
-		up_pt := points[up_id]
-		if up_pt.y+1 == p.y && !g.Edge(up_id, id) {
-			up_diff := up_pt.height - p.height
-			if up_diff == 0 {
-				g.AddCost(id, up_id, sameHeightCost)
-				fmt.Printf("adding %d cost ^ edge for points %d, %d\n", sameHeightCost, id, up_id)
-				//thisCost = sameHeightCost
-			} else if up_diff == 1 {
-				g.AddCost(id, up_id, diffHeightCost)
-				fmt.Printf("adding %d cost ^ edge for points %d, %d\n", diffHeightCost, id, up_id)
-				//thisCost = diffHeightCost
-			}
-			//  else {
-			// 	g.AddCost(id, left_id, int64(up_diff))
-			// 	fmt.Printf("adding %d cost ^ edge for points %d, %d\n", up_diff, id, up_id)
-			// }
-		}
-
-		var (
-			starts []coord
-			end    coord
-		)
-		blah := coord{}
-
-		down_id := getPoint(points, p.x, p.y+1)
-		down_pt := points[down_id]
-		if down_pt.y-1 == p.y && !g.Edge(down_id, id) {
-			down_diff := down_pt.height - p.height
-			if down_diff == 0 {
-				g.AddCost(id, down_id, sameHeightCost)
-				fmt.Printf("adding %d cost v edge for points %d, %d\n", sameHeightCost, id, down_id)
-				//thisCost = sameHeightCost
-			} else if down_diff == 1 {
-				g.AddCost(id, down_id, diffHeightCost)
-				fmt.Printf("adding %d cost v edge for points %d, %d\n", diffHeightCost, id, down_id)
-				//thisCost = diffHeightCost
-			}
-			//  else {
-			// 	g.AddCost(id, left_id, int64(down_diff))
-			// 	fmt.Printf("adding %d cost v edge for points %d, %d\n", down_diff, id, down_id)
-			// }
-		}
-		//fmt.Println(thisCost)
 	}
 
-	//fmt.Println(g)
+	minSteps_p2 := math.MaxInt
 
-	path, dist := graph.ShortestPath(g, getPoint(points, startPoint.x, startPoint.y), getPoint(points, endPoint.x, endPoint.y))
-	fmt.Println("path:", path, "dist:", dist, "path_length:", len(path))
+	//fmt.Println(starts)
+	// to remove E from grid
+	grid[end.x][end.y] = 'z'
+	grid[starts_p1.x][starts_p1.y] = 'a'
+	minSteps_p1 := bfs(grid, starts_p1, end)
+	for _, start := range starts_p2 {
+		// to remove possible 'S' from grid
+		grid[start.x][start.y] = 'a'
+		curSteps := bfs(grid, start, end)
+		minSteps_p2 = min(minSteps_p2, curSteps)
+	}
 
-	// dist2 := make([]int, g.Order())
-	// graph.BFS(g, 0, func(v, w int, _ int64) {
-	// 	fmt.Println(v, "to", w)
-	// 	dist2[w] = dist2[v] + 1
-	// })
-	// fmt.Println("dist2:", dist2, "dist2_length:", len(dist2))
+	fmt.Println("Minimum steps for Part1:", minSteps_p1)
+	fmt.Println("Minimum steps for Part2:", minSteps_p2)
 
-	// Show us what we've got!
-	//fmt.Println("Part 1 shortest Path:", inspectedItems_p1[len(inspectedItems_p1)-1]*inspectedItems_p1[len(inspectedItems_p1)-2])
-	//fmt.Println("Part 2 Monkey Business:", inspectedItems_p2[len(inspectedItems_p2)-1]*inspectedItems_p2[len(inspectedItems_p2)-2])
-
-	fmt.Println(minSteps)
 	fmt.Printf("Took %s\n", time.Since(start))
 
+}
+
+func bfs(grid [][]byte, start, end coord) int {
+	seen := make(map[coord]bool)
+	seen[start] = true
+	queue := []coord{start}
+	steps := 0
+	var dirs = []coord{{1, 0}, {0, 1}, {-1, 0}, {0, -1}}
+	found := false
+
+	// simple BFS
+L:
+	for len(queue) > 0 {
+		k := len(queue)
+		for i := 0; i < k; i++ {
+			cur := queue[0]
+			queue = queue[1:]
+
+			if cur == end {
+				found = true
+				break L
+			}
+
+			for _, dir := range dirs {
+				newCoord := coord{cur.x + dir.x, cur.y + dir.y}
+				// isInvalid?
+				if newCoord.x < 0 || newCoord.x >= len(grid) || newCoord.y < 0 || newCoord.y >= len(grid[0]) {
+					continue
+				}
+				// isSeen?
+				if seen[newCoord] {
+					continue
+				}
+				// isTooHigh?
+				isNewCoordGreater := grid[newCoord.x][newCoord.y] > grid[cur.x][cur.y]
+				if isNewCoordGreater && grid[newCoord.x][newCoord.y]-grid[cur.x][cur.y] > 1 {
+					continue
+				}
+				seen[newCoord] = true
+				queue = append(queue, newCoord)
+			}
+		}
+		steps++
+	}
+
+	if !found {
+		//fmt.Println(start, "to", end, "not fund")
+		return math.MaxInt
+	}
+
+	return steps
 }
