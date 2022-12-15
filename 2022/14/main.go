@@ -73,6 +73,7 @@ func main() {
 
 	scan := map[coord]string{}
 	biggestY := 0
+	smallestX, biggestX := 500, 500
 	scan[coord{x: 500, y: 0}] = "+"
 	for _, line := range strings.Split(sfile, "\n") {
 		//path := []string{}
@@ -129,21 +130,40 @@ func main() {
 			if cur.y > biggestY {
 				biggestY = cur.y
 			}
+			if cur.x > biggestX {
+				biggestX = cur.x
+			}
+			if cur.x < smallestX {
+				smallestX = cur.x
+			}
 
 		}
 	}
 
-	fmt.Println(len(scan), biggestY)
+	//fmt.Println(len(scan), biggestY)
+
+	// minx, maxx := smallestX, biggestX
+	// for f := smallestX - 20; f <= biggestX+20; f++ {
+	// 	scan[coord{x: f, y: biggestY + 2}] = "#"
+
+	// 	if f < minx {
+	// 		minx = f
+	// 	}
+	// 	if f > maxx {
+	// 		maxx = f
+	// 	}
+	// }
+	// smallestX, biggestX = minx, maxx
 
 	flowing := true
-	for sandCounter := 1; sandCounter <= 5 && flowing == true; sandCounter++ {
+	sandCounter := 0
+	sand_P1 := 0
+	//for loop := 1; loop <= 24 && flowing == true; loop++ {
+	for flowing == true {
+
 		sand := coord{x: 500, y: 0}
 		rested := false
-		for rested == false {
-
-			//if !checkBelow(scan, sand) {
-			//
-			//} else {
+		for flowing == true && rested == false {
 
 			_, sand_bb := scan[coord{x: sand.x, y: sand.y + 1}]
 			_, sand_br := scan[coord{x: sand.x + 1, y: sand.y + 1}]
@@ -155,22 +175,17 @@ func main() {
 				if sand.y > biggestY+5 {
 					fmt.Println("overflow")
 					flowing = false
-					rested = true
+					sand_P1 = sandCounter
 				}
 			} else {
 
 				// find way to incrase X and loop again
-				if _, occupied_bl := scan[sand_bl]; !occupied_bl {
-					// check left
-
-					rested = true
-
-				} else if _, occupied_br := scan[sand_br]; !occupied_br {
-					// check right
-					//scan[coord{x: sand.x + 1, y: sand.y + 1}] = "o"
-					rested = true
+				if !sand_bl {
+					sand.x--
+				} else if !sand_br {
+					sand.x++
 				} else {
-					//scan[coord{x: sand.x, y: sand.y}] = "o"
+					scan[coord{x: sand.x, y: sand.y}] = "o"
 					rested = true
 				}
 			}
@@ -178,18 +193,13 @@ func main() {
 		}
 		scan[coord{x: sand.x, y: sand.y}] = "o"
 		//fmt.Println(sandCounter)
-
+		sandCounter++
 	}
 
-	drawScan(scan, biggestY, 493, 504)
+	//drawScan(scan, biggestY+5, smallestX, biggestX)
 
-	/*
-		check below
-			if !occupied below
-				increment y + 1 && continue
-	*/
 	// Show us what we've got!
-	//fmt.Println("Part 1 Monkey Business:", inspectedItems_p1[len(inspectedItems_p1)-1]*inspectedItems_p1[len(inspectedItems_p1)-2])
+	fmt.Println("Part 1 Sand:", sand_P1)
 
 	fmt.Printf("Took %s\n", time.Since(start))
 
