@@ -53,8 +53,8 @@ func distance(a, b coord) (dist int) {
 }
 
 func drawGrid(points map[coord]string, bounds map[string]int) {
-	for y := bounds["miny"] - 1; y <= bounds["maxy"]+1; y++ {
-		for x := bounds["minx"] - 1; x <= bounds["maxx"]+1; x++ {
+	for y := bounds["miny"]; y <= bounds["maxy"]; y++ {
+		for x := bounds["minx"]; x <= bounds["maxx"]; x++ {
 			if marker, p := points[coord{x: x, y: y}]; p {
 				fmt.Printf(marker)
 			} else {
@@ -170,28 +170,34 @@ func main() {
 
 	// ------------ end borrowed
 
-	// for _, p := range pairs {
-	// 	//p := pairs[6]
-	// 	for dist := 1; dist <= distance(p["S"], p["B"]); dist++ {
+	counter := 0
+	for _, p := range pairs {
+		//p := pairs[6]
+		for dist := 1; dist <= distance(p["S"], p["B"]); dist++ {
 
-	// 		for x := p["S"].x - dist; x <= p["S"].x+dist; x++ {
-	// 			for y := p["S"].y - dist; y <= p["S"].y+dist; y++ {
-	// 				thisPoint := coord{x: x, y: y}
-	// 				if _, occ := grid[thisPoint]; !occ && distance(p["S"], thisPoint) <= dist && y == keyLine {
-	// 					grid[coord{x: x, y: y}] = "#"
-	// 					counter++
-	// 					bounds["minx"] = min(bounds["minx"], x)
-	// 					bounds["miny"] = min(bounds["miny"], y)
+			for x := p["S"].x - dist; x <= p["S"].x+dist; x++ {
+				for y := p["S"].y - dist; y <= p["S"].y+dist; y++ {
+					thisPoint := coord{x: x, y: y}
+					if _, occ := grid[thisPoint]; !occ && distance(p["S"], thisPoint) <= dist { //  && y == keyLine_P1
 
-	// 					bounds["maxx"] = max(bounds["maxx"], x)
-	// 					bounds["maxy"] = max(bounds["maxy"], y)
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+						if y == keyLine_P1 {
+							counter++
+						}
+						if x <= bounds["maxx"] && x >= bounds["minx"] && y <= bounds["maxy"] && y >= bounds["miny"] {
+							grid[coord{x: x, y: y}] = "#"
+						}
+						//bounds["minx"] = min(bounds["minx"], x)
+						//bounds["miny"] = min(bounds["miny"], y)
 
-	//drawGrid(grid, bounds)
+						//bounds["maxx"] = max(bounds["maxx"], x)
+						//bounds["maxy"] = max(bounds["maxy"], y)
+					}
+				}
+			}
+		}
+	}
+
+	drawGrid(grid, bounds)
 
 	// fmt.Printf("\n\n")
 	// for y := bounds["miny"] - 1; y <= bounds["maxy"]+1; y++ {
