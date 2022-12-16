@@ -115,14 +115,13 @@ func main() {
 		bounds["maxy"] = max(bounds["maxy"], sy+distance(coord{x: sx, y: sy}, coord{x: bx, y: by}))
 		//bounds["maxy"] = max(bounds["maxy"], bx+distance(coord{x: sx, y: sy}, coord{x: bx, y: by}))
 	}
-
 	keyLine_P1 := 2000000
 	// Detect the --test flag and use sample data it's set
 	if *flag_testData {
 		keyLine_P1 = 10
 	}
 
-	// this block stolen from https://github.com/jasontconnell/advent/blob/master/2022/15/main.go
+	// this block borrowed from https://github.com/jasontconnell/advent/blob/master/2022/15/main.go
 	totalP1 := 0
 	for i := bounds["minx"]; i < bounds["maxx"]+1; i++ {
 		pt := coord{i, keyLine_P1}
@@ -140,7 +139,36 @@ func main() {
 		}
 	}
 
-	// // end stolen
+	searchLow_P2 := 0
+	searchHigh_P2 := 4000000
+	multiplier_P2 := 4000000
+
+	pt := coord{}
+	found := false
+	for y := searchLow_P2; y <= searchHigh_P2 && !found; y++ {
+		for x := searchLow_P2; x <= searchHigh_P2 && !found; x++ {
+			inrange := false
+			for _, s := range pairs {
+				d := distance(s["S"], coord{x, y})
+				if d <= distance(s["S"], s["B"]) {
+					inrange = true
+					skip := distance(s["S"], s["B"]) - d
+
+					x += skip
+					break
+				}
+			}
+
+			if !inrange {
+				pt = coord{x, y}
+				found = true
+			}
+		}
+	}
+
+	freq_P2 := pt.x*multiplier_P2 + pt.y
+
+	// ------------ end borrowed
 
 	// for _, p := range pairs {
 	// 	//p := pairs[6]
@@ -177,6 +205,8 @@ func main() {
 	// fmt.Printf("\n")
 
 	fmt.Println("Part 1 voids:", totalP1)
+
+	fmt.Println("Part 2 beacon frequency:", freq_P2)
 
 	//verbose(pairs)
 	//verbose(len(grid), grid)
