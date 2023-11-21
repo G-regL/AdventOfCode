@@ -38,6 +38,134 @@ func toInt(in string) (out int) {
 	return out
 }
 
+func solvePart1(monkeys map[string]monkey, solve string) int {
+	unsolved := 0
+
+	for _, m := range monkeys {
+		if !m.yells {
+			unsolved++
+		}
+
+	}
+
+	for unsolved > 0 {
+		for _, monkey := range monkeys {
+			//fmt.Println("monkey", monkey.name)
+			if monkey.yells == false {
+				if monkeys[monkey.term1_monkey].number != 0 && monkeys[monkey.term2_monkey].number != 0 {
+					//fmt.Println(" ", monkey.operation, "on monkeys", monkey.term1_monkey, monkey.term2_monkey)
+					switch monkey.operation {
+					case "+":
+						monkey.number = monkeys[monkey.term1_monkey].number + monkeys[monkey.term2_monkey].number
+
+					case "-":
+						monkey.number = monkeys[monkey.term1_monkey].number - monkeys[monkey.term2_monkey].number
+
+					case "*":
+						monkey.number = monkeys[monkey.term1_monkey].number * monkeys[monkey.term2_monkey].number
+
+					case "/":
+						monkey.number = monkeys[monkey.term1_monkey].number / monkeys[monkey.term2_monkey].number
+
+					}
+					//fmt.Println("  monkey.number", monkey.number)
+					monkey.yells = true
+
+					monkeys[monkey.name] = monkey
+
+					unsolved--
+				}
+
+			}
+
+		}
+		//fmt.Println("------------------- Done cycle", cycle, "-------------------")
+		//fmt.Println("Unsolved:", unsolved)
+		//cycle++
+	}
+
+	return monkeys[solve].number
+}
+
+func solvePart2(monkeys map[string]monkey) int {
+	cycle := 1
+
+	equal := false
+
+	monkeyL_ID := monkeys["root"].term1_monkey
+	monkeyR_ID := monkeys["root"].term2_monkey
+	fmt.Printf("root monkey tests %s (%d), %s (%d)\n", monkeyL_ID, monkeys[monkeyL_ID].number, monkeyR_ID, monkeys[monkeyR_ID].number)
+
+	delete(monkeys, "root")
+
+	for !equal { //&& cycle < 10
+
+		monkeys2 := map[string]monkey{}
+		for k, v := range monkeys {
+			monkeys2[k] = v
+		}
+
+		left := solvePart1(monkeys2, monkeyL_ID)
+		right := solvePart1(monkeys2, monkeyR_ID)
+
+		// 	fmt.Println(monkeys2)
+		// 	for _, monkey := range monkeys2 {
+		// 		fmt.Println("monkey", monkey.name)
+		// 		if monkey.yells == false {
+		// 			fmt.Println("  monkeys", monkey.term1_monkey, monkey.term2_monkey)
+		// 			if monkeys2[monkey.term1_monkey].number != 0 && monkeys2[monkey.term2_monkey].number != 0 {
+		// 				fmt.Println(" ", monkeys2[monkey.term1_monkey].number, monkey.operation, monkeys2[monkey.term2_monkey].number)
+		// 				switch monkey.operation {
+		// 				case "+":
+		// 					monkey.number = monkeys2[monkey.term1_monkey].number + monkeys2[monkey.term2_monkey].number
+
+		// 				case "-":
+		// 					monkey.number = monkeys2[monkey.term1_monkey].number - monkeys2[monkey.term2_monkey].number
+
+		// 				case "*":
+		// 					monkey.number = monkeys2[monkey.term1_monkey].number * monkeys2[monkey.term2_monkey].number
+
+		// 				case "/":
+		// 					monkey.number = monkeys2[monkey.term1_monkey].number / monkeys2[monkey.term2_monkey].number
+
+		// 				}
+		// 				fmt.Println("  monkey.number", monkey.number)
+		// 				monkey.yells = true
+
+		// 				monkeys2[monkey.name] = monkey
+		// 			}
+
+		// 		}
+		// 	}
+
+		fmt.Println(monkeys2)
+		fmt.Println(left, right)
+
+		if monkeys2[monkeyL_ID].number < monkeys2[monkeyR_ID].number {
+			humn := monkeys["humn"]
+			humn.number--
+			monkeys["humn"] = humn
+			fmt.Println("  decrement")
+		} else if monkeys2[monkeyL_ID].number > monkeys2[monkeyR_ID].number {
+			humn := monkeys["humn"]
+			humn.number++
+			monkeys["humn"] = humn
+			fmt.Println("  increment")
+		} else {
+			equal = true
+			fmt.Println("  equal")
+		}
+		fmt.Printf("  %d; %s (%d), %s (%d)\n", monkeys["humn"].number, monkeyL_ID, monkeys2[monkeyL_ID].number, monkeyR_ID, monkeys2[monkeyR_ID].number)
+
+		fmt.Println("------------------- Done cycle", cycle, "-------------------")
+
+		cycle++
+	}
+
+	//fmt.Println(monkeys["root"])
+	return monkeys["humn"].number
+}
+
 func main() {
 	start := time.Now()
 	flag.Parse()
@@ -87,45 +215,9 @@ func main() {
 
 	//fmt.Println(unsolved)
 
-	//cycle := 1
+	fmt.Println("Part 1 - root yells:", solvePart1(monkeys, "root"))
+	//fmt.Println("Part 2 - humn yells:", solvePart2(monkeys))
 
-	for unsolved > 0 {
-		for _, monkey := range monkeys {
-			//fmt.Println("monkey", monkey.name)
-			if monkey.yells == false {
-				if monkeys[monkey.term1_monkey].number != 0 && monkeys[monkey.term2_monkey].number != 0 {
-					//fmt.Println(" ", monkey.operation, "on monkeys", monkey.term1_monkey, monkey.term2_monkey)
-					switch monkey.operation {
-					case "+":
-						monkey.number = monkeys[monkey.term1_monkey].number + monkeys[monkey.term2_monkey].number
-
-					case "-":
-						monkey.number = monkeys[monkey.term1_monkey].number - monkeys[monkey.term2_monkey].number
-
-					case "*":
-						monkey.number = monkeys[monkey.term1_monkey].number * monkeys[monkey.term2_monkey].number
-
-					case "/":
-						monkey.number = monkeys[monkey.term1_monkey].number / monkeys[monkey.term2_monkey].number
-
-					}
-					//fmt.Println("  monkey.number", monkey.number)
-					monkey.yells = true
-
-					monkeys[monkey.name] = monkey
-
-					unsolved--
-				}
-
-			}
-
-		}
-		//fmt.Println("------------------- Done cycle", cycle, "-------------------")
-		//fmt.Println("Unsolved:", unsolved)
-		//cycle++
-	}
-
-	fmt.Println("Part 1 - root yells:", monkeys["root"].number)
 	//fmt.Println("Part 2 beacon frequency:", freq_P2)
 
 	fmt.Printf("Took %s\n", time.Since(start))
