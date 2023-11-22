@@ -32,9 +32,37 @@ logger.addHandler(ch)
 with open(ARG_data) as f:
     data = f.read()
 
+
 for line in data.split('\n'):
+    answer_p1 = None
+    answer_p2 = None
+
+
+    #Part 1
     ups = line.count("(")
     downs = line.count(")")
     logger.debug(f"count of chars: up=%d; down=%d", ups, downs)
-    logger.info(f"line ends up on floor: %d", ups - downs)
+    answer_p1 = ups - downs
+
+    #Part 2
+    floor = 0
+    for i, v in enumerate(line):
+        #logger.debug(f"movement: %s", v)
+        if v == "(":
+            floor += 1
+            logger.debug(f"movement: %s, floor: %d", v, floor)
+        if v == ")":
+            floor -= 1
+            logger.debug(f"movement: %s, floor: %d", v, floor)
+        
+        if floor < 0:
+            logger.debug("Found basement!")
+            logger.debug(f"We got to basement at step: %d", i+1)
+
+            answer_p2 = i+1
+            break
+
+
+    print(f"__P1__ End up on floor:", answer_p1)
+    print(f"__P2__ We got to basement at step:", answer_p2)
     #logger.info(line)
