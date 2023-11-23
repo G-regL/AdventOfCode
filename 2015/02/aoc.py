@@ -1,6 +1,6 @@
 import sys, getopt
 import logging
-import math
+import time
 
 ARG_data = 'input.txt'
 ARG_logLevel = 'INFO'
@@ -23,15 +23,14 @@ logger.setLevel(ARG_logLevel)
 ch = logging.StreamHandler()
 ch.setLevel(ARG_logLevel)
 # create formatter
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s; %(message)s")
+formatter = logging.Formatter("%(message)s")
 # add formatter to ch
 ch.setFormatter(formatter)
 # add ch to logger
 logger.addHandler(ch)
 #without replace()
  
-with open(ARG_data) as f:
-    data = f.read()
+data = open(ARG_data).read()
 
 answer_p1 = 0
 answer_p2 = 0
@@ -63,3 +62,5 @@ for line in data.split('\n'):
 print(f"__P1__ Total square feet of paper:", answer_p1)
 print(f"__P2__ Total feet of ribbon:", answer_p2)
 #logger.info(line)
+
+print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))

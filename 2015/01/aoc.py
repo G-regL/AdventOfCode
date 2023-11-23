@@ -1,5 +1,6 @@
 import sys, getopt
 import logging
+import time
 
 ARG_data = 'input.txt'
 ARG_logLevel = 'INFO'
@@ -22,7 +23,7 @@ logger.setLevel(ARG_logLevel)
 ch = logging.StreamHandler()
 ch.setLevel(ARG_logLevel)
 # create formatter
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s; %(message)s")
+formatter = logging.Formatter("%(message)s")
 # add formatter to ch
 ch.setFormatter(formatter)
 # add ch to logger
@@ -50,10 +51,10 @@ for line in data.split('\n'):
         #logger.debug(f"movement: %s", v)
         if v == "(":
             floor += 1
-            logger.debug(f"movement: %s, floor: %d", v, floor)
         if v == ")":
             floor -= 1
-            logger.debug(f"movement: %s, floor: %d", v, floor)
+            
+        logger.debug(f"movement: %s, floor: %d", v, floor)
         
         if floor < 0:
             logger.debug("Found basement!")
@@ -63,6 +64,8 @@ for line in data.split('\n'):
             break
 
 
-    print(f"__P1__ End up on floor:", answer_p1)
-    print(f"__P2__ We got to basement at step:", answer_p2)
+    print(f"__P1__ End up on floor: {answer_p1}")
+    print(f"__P2__ We got to basement at step: {answer_p2}")
     #logger.info(line)
+
+print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))
