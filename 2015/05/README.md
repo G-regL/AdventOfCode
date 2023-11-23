@@ -15,3 +15,7 @@ For example:
 - `dvszwmarrgswjxmb` is naughty because it contains only one vowel.
 
 How many strings are nice?
+
+Your puzzle answer was `236`.
+
+___The first half of this puzzle is complete! It provides one gold star: *___
