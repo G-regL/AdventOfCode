@@ -34,7 +34,7 @@ answer_p1 = 0
 answer_p2 = 0
 
 grid = [[0 for i in range(1000)] for j in range(1000)]
-lightsOn = 0
+grid_P2 = [[0 for i in range(1000)] for j in range(1000)]
 
 for line in data.split('\n'):
     parts = line.split(' ')
@@ -46,42 +46,29 @@ for line in data.split('\n'):
 
     start_x, start_y = list(map(lambda n: int(n), start.split(',')))
     end_x, end_y = list(map(lambda n: int(n), end.split(',')))
-    pre = lightsOn
+
     for x in range(start_x, end_x+1):
         for y in range(start_y, end_y+1):
             if instruction == "on":
-                #logger.debug(f"Turned on light at {x}:{y}")
                 grid[x][y] = 1
-                lightsOn += 1
+                grid_P2[x][y] += 1
             elif instruction == "off":
-                #logger.debug(f"Turned off light at {x}:{y}")
                 grid[x][y] = 0
-                lightsOn -= 1
-            else:
-                if grid[x][y] == 0:
-                    #logger.debug(f"Toggled on light at {x}:{y}")
-                    grid[x][y] = 1
-                    lightsOn += 1
-                else:
-                    #logger.debug(f"Toggled off light at {x}:{y}")
-                    grid[x][y] = 0
-                    lightsOn -= 1
+                if grid_P2[x][y] > 0:
+                    grid_P2[x][y] -= 1
+            else: #toggle
+                grid[x][y] = 1 if grid[x][y] == 0 else 0
+                grid_P2[x][y] += 2
 
-    if lightsOn < 0:
-        lightsOn = 0
-
-    logger.debug(f"  changed %d lights", abs(pre - lightsOn))
-    logger.debug(f"  Lights on: %d", lightsOn)
-    #input("  Press Enter to continue...")
-
-
+#Count it all up
+# I tried doing this inline above, but it didn't work. Not sure why.
 for x in range(1000):
     for y in range(1000):
         if grid[x][y]:
             answer_p1 += 1
+        answer_p2 += grid_P2[x][y]
 
-print(f"__P1__ Lights on (loop):", lightsOn)
 print(f"__P1__ Lights on (count):", answer_p1)
-#print(f"__P2__ Nice strings:", answer_p2)
+print(f"__P2__ Total brightness:", answer_p2)
 
 print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))
