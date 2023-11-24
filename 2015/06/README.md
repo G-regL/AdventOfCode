@@ -14,3 +14,7 @@ For example:
 - `turn off 499,499 through 500,500` would turn off (or leave off) the middle four lights.
 
 After following the instructions, how many lights are lit?
+
+Your puzzle answer was `377891`.
+
+___The first half of this puzzle is complete! It provides one gold star: *___
