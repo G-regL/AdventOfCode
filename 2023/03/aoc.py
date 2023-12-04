@@ -43,7 +43,9 @@ adjacent_delta_coords = [[0,-1], [1,-1], [1, 0], [1,1], [0, 1], [-1,1], [-1,0], 
 part_numbers = []
 number = ""
 number_touching_symbol = False
+number_touching_gear = ""
 
+gears = {}
 gear_ratios = []
 # loop through lines
 for y,line in enumerate(grid):
@@ -51,17 +53,22 @@ for y,line in enumerate(grid):
 
 
         # We don't care about things that aren't digits or *'s in our grid
-        if not char.isdigit() and char != "*":
+        if not char.isdigit():
             if number_touching_symbol:
                 debug(f"Adding {number} to parts list")
                 part_numbers.append(int(number))
-            #elif char == ".":
-                #debug(f"  igoring because is .")
-            #else:
-            #    debug(f"{number} not ajdacent to symbol")
+                            
+            # Part 2 detection
+            if number_touching_gear:
+                debug(f" found gear at {number_touching_gear}")
+                if number_touching_gear in gears.keys():
+                    gears[number_touching_gear].append(int(number))
+                else:
+                    gears[number_touching_gear] = [int(number)]
 
             number = ""
             number_touching_symbol = False
+            number_touching_gear = ""
             continue
 
         #Part 1 detection loop
@@ -82,77 +89,85 @@ for y,line in enumerate(grid):
                     #debug(f'    is . or digit')
                     continue
 
+
+                if adj_char == "*":
+                    number_touching_gear = str(x + adj[0]) + "-" + str(y + adj[1])
+                    
                 #debug(f'    not . or digit')
 
                 #debug(f"    has to be a symbol, right?")
                 number_touching_symbol = True
 
-        # Part 2 detection
-        if char == "*":
-            debug(f"char {char} at {x},{y}")
+        # # Part 2 detection
+        # if char == "*":
+        #     debug(f"char {char} at {x},{y}")
             
-            debug(f'_P2_  is *, so doing gear ratio detection')
-            found_gear_ratio = False
-            found_first_gear = True
-            gears = set()
-            # Look around and find a number
-            for adj in adjacent_delta_coords:
-                if found_gear_ratio:
-                    debug(f"  Found gear ratio, breaking out of adjacent adjacent_delta_coords loop")
-                    break
+        #     debug(f'_P2_  is *, so doing gear ratio detection')
+        #     found_gear_ratio = False
+        #     found_first_gear = True
+        #     gears = set()
+        #     # Look around and find a number
+        #     for adj in adjacent_delta_coords:
+        #         if found_gear_ratio:
+        #             debug(f"  Found gear ratio, breaking out of adjacent adjacent_delta_coords loop")
+        #             break
 
-                #if the adjacent character is outside the grid, we don't do anything
-                if not in_bounds(x, y, adj[0], adj[1]):
-                    #debug(f"  {x + adj[0]},{y + adj[1]} is out of bounds")
-                    continue
-                #debug(f"   {x + adj[0]},{y + adj[1]} in bounds")
+        #         #if the adjacent character is outside the grid, we don't do anything
+        #         if not in_bounds(x, y, adj[0], adj[1]):
+        #             #debug(f"  {x + adj[0]},{y + adj[1]} is out of bounds")
+        #             continue
+        #         #debug(f"   {x + adj[0]},{y + adj[1]} in bounds")
 
-                adj_char = grid[y + adj[1]][x + adj[0]]
+        #         adj_char = grid[y + adj[1]][x + adj[0]]
 
-                #If the adjacent character a digit, follow that 
-                if adj_char.isdigit():
-                    debug(f'  {adj_char} at {x + adj[0]},{y + adj[1]} ({adj[0]},{adj[1]}) is digit')
-                    gear = ""
-                    for offset in range(-3,3):
-                        if found_gear_ratio:
-                            debug(f"    Found gear ratio, breaking out of offset loop")
-                            break
+        #         #If the adjacent character a digit, follow that 
+        #         if adj_char.isdigit():
+        #             debug(f'  {adj_char} at {x + adj[0]},{y + adj[1]} ({adj[0]},{adj[1]}) is digit')
+        #             gear = ""
+        #             for offset in range(-3,3):
+        #                 if found_gear_ratio:
+        #                     debug(f"    Found gear ratio, breaking out of offset loop")
+        #                     break
 
-                        if not in_bounds(x, y, adj[0] + offset):
-                            continue
+        #                 if not in_bounds(x, y, adj[0] + offset):
+        #                     continue
                         
-                        #debug(f"  distance from * ({x},{adj[0] + offset}={abs(x - (adj[0] + offset))})")
-                        if abs(x - (adj[0] + offset)) > 7:
-                            debug(f"  We're too far from the * ({x},{adj[0] + offset}={abs(x - (adj[0] + offset))})")
-                            continue
+        #                 #debug(f"  distance from * ({x},{adj[0] + offset}={abs(x - (adj[0] + offset))})")
+        #                 if abs(x - (adj[0] + offset)) > 7:
+        #                     debug(f"  We're too far from the * ({x},{adj[0] + offset}={abs(x - (adj[0] + offset))})")
+        #                     continue
 
-                        adj_gear_char = grid[y + adj[1]][x + adj[0] + offset]
+        #                 adj_gear_char = grid[y + adj[1]][x + adj[0] + offset]
 
         
-                        #debug(f'    adj_hear_char {adj_gear_char} at {x + adj[0] + offset},{y + adj[1]}')
-                        # We found a digit, so look either side of it to see if that's *also* a digit
-                        if adj_gear_char.isdigit():
-                            #debug(f"     {adj_gear_char} is a digit")
-                            gear += adj_gear_char
-                            debug(f"      {gear}")
+        #                 #debug(f'    adj_hear_char {adj_gear_char} at {x + adj[0] + offset},{y + adj[1]}')
+        #                 # We found a digit, so look either side of it to see if that's *also* a digit
+        #                 if adj_gear_char.isdigit():
+        #                     #debug(f"     {adj_gear_char} is a digit")
+        #                     gear += adj_gear_char
+        #                     debug(f"      {gear}")
                         
 
-                        if len(gear) > 1 or not adj_gear_char.isdigit():
-                            #debug(f"      {adj_gear_char} is something other than a digit")
-                            gears.add(int(gear))
-                            debug(f"      adding {gear} to gears:{gears}")
-                            gear = ""
+        #                 if len(gear) > 1 or not adj_gear_char.isdigit():
+        #                     #debug(f"      {adj_gear_char} is something other than a digit")
+        #                     gears.add(int(gear))
+        #                     debug(f"      adding {gear} to gears:{gears}")
+        #                     gear = ""
                                 
-                            #else:
-                                #debug(f"      neither of the two if things")
+        #                     #else:
+        #                         #debug(f"      neither of the two if things")
 
-                        if len(gears) == 2:
-                            found_gear_ratio = True
-                            debug(f"        append {math.prod(gears)} to gear_ratios")
-                            gear_ratios.append(math.prod(gears))
-                            gears = set()
-                            gear = ""
+        #                 if len(gears) == 2:
+        #                     found_gear_ratio = True
+        #                     debug(f"        append {math.prod(gears)} to gear_ratios")
+        #                     gear_ratios.append(math.prod(gears))
+        #                     gears = set()
+        #                     gear = ""
 
+debug(f" gears: {gears}")
+for _ , gear in gears.items():
+    if len(gear) == 2:
+        gear_ratios.append(math.prod(gear))
 debug(f" gear ratios {gear_ratios}")
 
 
