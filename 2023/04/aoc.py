@@ -21,40 +21,62 @@ def debug(thing):
         print(f"DEBUG:{thing}")
 
 answer_p1 = 0
-answer_p2 = 0
 
 # read input data and split into list of lines
 data = open(ARG_data).read().split('\n')
 
+# Pre-populate the card_counts as 1, because we *know* we have at least one of each
+# Also helps down inthe Part 2 card count loop to ensure we're not adding cards out of range.
+card_counts = {}
+for c in range(1,len(data) + 1):
+    card_counts[c] = 1
 
-# loop through rows/columns
+# loop through cards
 for card in data:
+    # Get card number, winning numbers, and my numbers
     card, numbers = card.split(":")
-    card = card.strip().split("Card ")
+    card = int(card.strip().split(' ')[-1])
     numbers_win, numbers_mine = [set(n.strip().split(' ')) for n in numbers.strip().split(' | ')]
     
-    debug(f'{card}; winners({numbers_win}), mine({numbers_mine})')
+    debug(f'{card} - winners({numbers_win}), mine({numbers_mine})')
 
+    # Find my winning numbers
     winners = numbers_win.intersection(numbers_mine)
 
+    # Because I'm splitting on spaces, and the numbers are column aligned, 
+    # there's sometimes an extra '' element in the set, so this removes it
     winners.discard('')
 
-    debug(f'  matching numbers: {winners}; matches ({len(winners)})')
+    debug(f'    matching numbers:{winners}; matches({len(winners)}); copies({card_counts[card]})')
     points = 0
-    if len(winners) - 1 > 1:
+    # Calculate points for this card
+    if len(winners) - 1 >= 1:
         points += math.pow(2, int(len(winners) - 1))
-    elif len(winners) - 1 == 1:
-        points += 2
     elif len(winners) == 1:
         points += 1
 
     answer_p1 += int(points)
-    debug(f'  points: {int(points)}')
+    debug(f'    points: {int(points)}')
 
+    # Part 2 card count
+    # We only add card copies if we have winners
+    if len(winners) > 0:
+        # Loop over each copy of this card
+        for _ in range(0,card_counts[card]):
+            # For each winner we have, add a copy to the next cards, but only if they're in range
+            for next in range(0, len(winners)+1):
+                if next in card_counts.keys():
+                    #debug(f'    adding {1} to card {card + next}')
+                    card_counts[card + next] += 1
+    
+    debug(f'    card counts: {card_counts}')
+
+
+debug(f'Final card counts: {card_counts}')
 
 # Print out the answers
 print(f"__P1__ Sum of winning cards: {answer_p1}")
-#print(f"__P2__ Sum of gear ratios: {sum(gear_ratios)}")
+print(f"__P2__ Total number of scratchcards: {sum(card_counts.values())}")
 
 # Tell me how inefficecient my code is
 print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))
