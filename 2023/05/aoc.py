@@ -28,6 +28,13 @@ data = open(ARG_data).read().split('\n\n')
 seeds = [int(s) for s in data[0].split(':')[1].split()]
 #debug(f'seeds: {seeds}')
 
+
+seeds_p2 = []
+
+for i in range(0, len(seeds), 2):
+    seeds_p2.append((seeds[i], seeds[i] + seeds[i + 1]))
+#seeds_p2 = [s for i in range(0,len(seeds), 2) for s in range(seeds[i], seeds[i] + seeds[i+1])]
+debug(f'seeds_p2: {seeds_p2}')
 blocks = {}
 
 # loop through data
@@ -37,7 +44,6 @@ for block in data[1:]:
     blocks[lines[0].split(' ')[0]] = []
     for l in lines[1:]:
         blocks[lines[0].split(' ')[0]].append([int(v) for v in l.split()])
-
 
 location_min = 10000000000000000000
 for s in seeds:
@@ -62,7 +68,7 @@ for s in seeds:
 
 
 # Print out the answers
-print(f"__P1__ : {location_min}")
+print(f"__P1__ Best position for seeds: {location_min}")
 print(f"__P2__ : {answer_p1}")
 
 # Tell me how inefficecient my code is
