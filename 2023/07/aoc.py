@@ -49,7 +49,8 @@ answer_p2 = 0
 # read input data and split into list of lines
 data = open(ARG_data).read().split('\n')
 
-hands = hands_p2 = {'hc': [], '1p': [], '2p': [], '3oak': [], 'fh': [], '4oak': [], '5oak': []}
+hands = {'hc': [], '1p': [], '2p': [], '3oak': [], 'fh': [], '4oak': [], '5oak': []}
+hands_p2 = {'hc': [], '1p': [], '2p': [], '3oak': [], 'fh': [], '4oak': [], '5oak': []}
 
 # loop through data
 for line in data:
@@ -83,7 +84,7 @@ for hand_type in list(hands.keys()):
     final_list += hands[hand_type]
 
 for i, h in enumerate(final_list):
-    debug(f'Hand: {h[0]}; Bid: {h[1]}; Rank: {i + 1}; winnings: {(i + 1) * h[1]}; type: {h[2]}')
+    debug(f'P1 - Hand: {h[0]}; Bid: {h[1]:4}; type: {h[2]: >4}; Rank: {i + 1:4}; winnings: {(i + 1) * h[1]}')
     answer_p1 += (i + 1) * h[1]
     
 
@@ -94,7 +95,7 @@ for hand_type in list(hands_p2.keys()):
     final_list_p2 += hands_p2[hand_type]
 
 for i, h in enumerate(final_list_p2):
-    debug(f'Hand: {h[0]}; Bid: {h[1]}; Rank: {i + 1}; winnings: {(i + 1) * h[1]}; type: {h[2]}')
+    debug(f'P2 - Hand: {h[0]}; Bid: {h[1]:4}; type: {h[2]: >4}; Rank: {i + 1:4}; winnings: {(i + 1) * h[1]}')
     answer_p2 += (i + 1) * h[1]
 
 
