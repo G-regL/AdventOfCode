@@ -61,12 +61,16 @@ Here, there are two starting nodes, `11A` and `22A` (because they both end with 
 
 = Step 0: You are at `11A` and `22A`.
 = Step 1: You choose all of the **left** paths, leading you to `11B` and `22B`.
-= Step 2: You choose all of the *right* paths, leading you to `11Z` and `22C`.
-= Step 3: You choose all of the *left* paths, leading you to `11B` and `22Z`.
-= Step 4: You choose all of the *right* paths, leading you to `11Z` and `22B`.
-= Step 5: You choose all of the *left* paths, leading you to `11B` and `22C`.
-= Step 6: You choose all of the *right* paths, leading you to `11Z` and `22Z`.
+= Step 2: You choose all of the **right** paths, leading you to `11Z` and `22C`.
+= Step 3: You choose all of the **left** paths, leading you to `11B` and `22Z`.
+= Step 4: You choose all of the **right** paths, leading you to `11Z` and `22B`.
+= Step 5: You choose all of the **left** paths, leading you to `11B` and `22C`.
+= Step 6: You choose all of the **right** paths, leading you to `11Z` and `22Z`.
 
 So, in this example, you end up entirely on nodes that end in `Z` after **`6`** steps.
 
 Simultaneously start on every node that ends with `A`. **How many steps does it take before you're only on nodes that end with `Z`?**
+
+Your puzzle answer was `12357789728873`.
+
+___Both parts of this puzzle are complete! They provide two gold stars: **___
