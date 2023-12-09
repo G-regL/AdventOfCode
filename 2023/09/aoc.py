@@ -27,12 +27,36 @@ data = open(ARG_data).read().split('\n')
 
 # loop through data
 for line in data:
-    pass
+    layers = []
+    layers.append([int(n) for n in line.split()])
+    debug(f'number set {layers[0]}')
+    all_zeros = False
+
+    while not all_zeros:
+        debug(f' range{len(layers[-1]) - 1}')
+        l = []
+        for i in range(len(layers[-1]) - 1):
+            l.append(layers[-1][i+1] - layers[-1][i])
+        
+        layers.append(l)
+
+        if len([n for n in l if n == 0]) == len(l):
+            all_zeros = True
+
+        debug(f'  layers: {layers}')
+        #time.sleep(5)s
+    
+    layers.reverse()
+    debug(f'  layers: {layers}')
+
+    next = sum([item[-1] for item in layers])
+    debug(f'  line: {line}, {next}')
+    answer_p1 += next
 
 
 # Print out the answers
 print(f"__P1__ : {answer_p1}")
-print(f"__P2__ : {answer_p1}")
+print(f"__P2__ : {answer_p2}")
 
 # Tell me how inefficecient my code is
 print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))
