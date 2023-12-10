@@ -16,7 +16,7 @@ for opt, arg in opts:
 # Useful during testing to see what the hell is going on
 def debug(thing):
     if ARG_debugLogging:
-        print(f"DEBUG: {thing}")
+        print(f"\33[93mDEBUG:\33[0m {thing}")
 
 answer_p1 = 0
 answer_p2 = 0
@@ -30,10 +30,9 @@ for line in data:
     # add sequence to the top of the layers
     layers.append([int(n) for n in line.split()])
     debug(f'number set {layers[0]}')
-    all_zeros = False
 
-    # While our our current layer isn't all 0s
-    while not all_zeros:
+    # While the last layer isn't all 0s
+    while len([n for n in layers[-1] if n == 0]) != len(layers[-1]):
         l = []
         for i in range(len(layers[-1]) - 1):
             # to the last layer, append the difference between the last, and second last values
@@ -41,10 +40,6 @@ for line in data:
 
         # push our new layer to the stack
         layers.append(l)
-
-        # Check our current layer to see if it's elements are all 0's
-        if len([n for n in l if n == 0]) == len(l):
-            all_zeros = True
     
 
     # Sum up the last elements from the whole layer stack to get the next value of the original sequence
@@ -63,14 +58,14 @@ for line in data:
         l.insert(0, layers[i][0] - layers[i-1][0])
 
     # Since we worked our *all* the previous values, but we only care about the "top" one (aka, OG),
-    #  we can just pull it off the end of the layer stack
+    #  we can just pull it off the end of the layer stack (because we revsered it ealier)
     previous = layers[-1][0]
     debug(f'  P2_line: {line}, {previous}')
     answer_p2 += previous
     
 # Print out the answers
-print(f"__P1__ : {answer_p1}")
-print(f"__P2__ : {answer_p2}")
+print(f"\33[32m__P1__ Sum of next numbers: \33[1m{answer_p1}\33[0m")
+print(f"\33[32m__P2__ Sum of previous numbers: \33[1m{answer_p2}\33[0m")
 
 # Tell me how inefficecient my code is
-print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))
+print("\33[35mTook \33[1;35m{}\33[0m\33[35m seconds to run\33[0m".format(time.process_time_ns() / 1000000000))
