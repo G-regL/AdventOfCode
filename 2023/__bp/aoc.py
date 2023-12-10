@@ -16,7 +16,7 @@ for opt, arg in opts:
 # Useful during testing to see what the hell is going on
 def debug(thing):
     if ARG_debugLogging:
-        print(f"DEBUG: {thing}")
+        print(f"\33[39mDEBUG:\33[0m {thing}")
 
 answer_p1 = 0
 answer_p2 = 0
@@ -31,8 +31,8 @@ for line in data:
 
 
 # Print out the answers
-print(f"__P1__ : {answer_p1}")
-print(f"__P2__ : {answer_p1}")
+print(f"\33[32m__P1__ : \33[1m{answer_p1}\33[0m")
+print(f"\33[32m__P2__ : \33[1m{answer_p2}\33[0m")
 
 # Tell me how inefficecient my code is
-print("Took {} seconds to run".format(time.process_time_ns() / 1000000000))
+print("\33[35mTook \33[1;35m{}\33[0m\33[35m seconds to run\33[0m".format(time.process_time_ns() / 1000000000))
