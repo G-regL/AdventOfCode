@@ -36,18 +36,22 @@ for c in grid:
         s = [*s]
         #debug(f'  section pre  {s}')
         for i, char in enumerate(s):
-            if char == "O":
-                continue
-            # Let's get down to the real work here.
+            # Let's move some boulders
             if char == ".":
+                # Only do stuff if there's a boulder further down in this section
                 if s[i:].count("O"):
+                    # Get the index of the next boulder, then set it's value to ., and our current one to O (swap them)
                     next_round = s.index("O", i)
                     s[next_round] = '.'
                     s[i] = "O"
+        # Re-join all the section points into a single string
         sections[si] = "".join(s)
 
+    # Rejoin all the sections into their new iteration
     tilted_line = "#".join(sections)
+    # Get the length of the line, since we'll be comparing often below
     line_length = len(tilted_line)
+    # Run through all the characters in the line, and give the round boulders weights
     for i, char in enumerate(tilted_line):
         if char == "O":
             answer_p1 += line_length - i
