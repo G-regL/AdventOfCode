@@ -38,34 +38,29 @@ for step in steps:
     #Part 1
     v = calculate_value(step)
     answer_p1 += v
-    debug(f"value after {step} - {v}")
 
     #Part 2
     label, focal_length = re.split("=|-", step)
     box = calculate_value(label)
-    debug(f"box for {label} - {box}")
     if "=" in step:
         updated = False
         for i,(lens_label, _) in enumerate(boxes[box]):
             if label == lens_label:
-                debug(f'  Found label({label}) at index({i}) in box({box})')
                 boxes[box][i] = (label, focal_length)
                 updated = True
         
         if not updated:
-            debug(f'  no label({label}) at in box({box}), appending {(label, focal_length)}')
             boxes[box].append((label, focal_length))
 
     elif '-' in step:
         for i,(lens_label, _) in enumerate(boxes[box]):
             if label == lens_label:
-                debug(f'  deleting label({label}) in box({box})')
                 del boxes[box][i]
 
 for box_index, box in enumerate(boxes, start=1):
-    for lens_index, lens in enumerate(box, start=1):
+    for lens_index, (_, focal_length) in enumerate(box, start=1):
         debug(f' box_index({box_index})')
-        answer_p2 += box_index * lens_index * int(lens[1])
+        answer_p2 += box_index * lens_index * int(focal_length)
 
 # Print out the answers
 print(f"\33[32m__P1__ : \33[1m{answer_p1}\33[0m")
