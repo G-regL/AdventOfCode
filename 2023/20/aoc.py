@@ -1,6 +1,7 @@
 import sys, getopt
 import time
 
+from collections import deque
 # By default I want the real input, and *not* to debug.
 ARG_data = 'input.txt'
 ARG_debugLogging = False
@@ -25,13 +26,75 @@ answer_p2 = 0
 data = open(ARG_data).read().split('\n')
 
 
-# loop through data
-for line in data:
-    pass
+modules = {}
+broadcast_dest = []
+for m in data:
+    name, _, dest = m.split(maxsplit=2)
+    myname = name[1:]
+    if name == "broadcaster":
+        broadcast_dest = dest.replace(' ', '').split(',')
+        myname = '_b'
+        this = {'type': 'b', 'dest': broadcast_dest}
+    elif name[0] == "%":
+        this = {'type': name[0], 'dest': dest.replace(' ', '').split(','), 'state': 0}
+    elif name[0] == "&":
+        this = {'type': name[0], 'dest': dest.replace(' ', '').split(','), 'states': {}}
+
+    modules[myname] = this
+
+for m in [x for x in modules if modules[x]["type"] == '&']:
+    #ic(modules[m])
+    modules[m]["states"] = {y: 0 for y in modules if m in modules[y]["dest"]}
+
+pulses_high = 0
+pulses_low = 0
+for _ in range(1000):
+    #debug(f'___button -low-> broadcaster')
+    queue = deque([('broadcast', d, 0) for d in broadcast_dest])
+
+    pulses_low += 1 + len(broadcast_dest)
+
+    while queue:
+        s, d, t = queue.popleft()
+
+        if not d in modules:
+            continue
+
+        #debug(f'___{s} {"-low->" if t == 0 else "-high->"} {d}')
+        # Flip-flop, but only if the pulse is low
+        if modules[d]['type'] == '%' and t == 0:
+            # flip our state high -> low, low -> high
+            modules[d]['state'] = 0 if modules[d]['state'] == 1 else 1
+            #queue up a pulse to each of our destinations
+            # pulse type is the same as our (new) state
+            new = [(d, x, modules[d]['state']) for _, x in enumerate(modules[d]['dest'])]
+            
+            if modules[d]['state'] == 1:
+                pulses_high += len(new)
+            else:
+                pulses_low += len(new)
+            queue.extend(new)
+            
+        # conjunction
+        elif modules[d]['type'] == '&':
+            modules[d]['states'][s] = t
+            if sum([foo for foo in modules[d]['states'].values()]) == len(modules[d]["states"]):
+                # All input states are high, queue a low pulse to all our destinations
+                new = [(d, x, 0) for x in modules[d]['dest']]
+                pulses_low += len(new)
+            else:
+                new = [(d, x, 1) for x in modules[d]['dest']]
+                pulses_high += len(new)
+            queue.extend(new)
+        
+        
+#print(pulses_low, pulses_high)
+
+#print(pulses_low * pulses_high)
 
 
 # Print out the answers
-print(f"\33[32m__P1__ : \33[1m{answer_p1}\33[0m")
+print(f"\33[32m__P1__ : \33[1m{pulses_low * pulses_high}\33[0m")
 print(f"\33[32m__P2__ : \33[1m{answer_p2}\33[0m")
 
 # Tell me how inefficecient my code is
