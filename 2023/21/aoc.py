@@ -79,7 +79,7 @@ def part2_from_reddit(data): # https://www.reddit.com/r/adventofcode/comments/18
 
 # Print out the answers
 print(f"\33[32m__P1__ : \33[1m{len(positions)}\33[0m")
-print(f"\33[32m__P2__ : \33[1m{part2_from(grid)}\33[0m")
+print(f"\33[32m__P2__ : \33[1m{part2_from_reddit(grid)}\33[0m")
 
 # Tell me how inefficecient my code is
 print("\33[35mTook \33[1;35m{}\33[0m\33[35m seconds to run\33[0m".format(time.process_time_ns() / 1000000000))
