@@ -27,13 +27,26 @@ answer_p2 = 0
 data = open(ARG_data).read().replace("\n","")
 
 
-matches = re.findall(r'mul\([\d]{1,3},[\d]{1,3}\)', data)
+matches = re.findall(r'mul\([\d]{1,3},[\d]{1,3}\)|don\'t\(\)|do\(\)', data)
 debug(matches)
-
+    
+enabled = True
 for mul in matches:
-    matches = re.match(r'mul\(([\d]{1,3}),([\d]{1,3})\)', mul)
-    factor1, factor2 = list(map(int, matches.group(1,2)))
-    answer_p1 += factor1 * factor2
+    if mul == "don't()":
+        enabled = False
+    elif mul == "do()":
+        enabled = True
+
+    else:
+        matches = re.match(r'mul\(([\d]{1,3}),([\d]{1,3})\)', mul)
+        factor1, factor2 = list(map(int, matches.group(1,2)))
+        answer_p1 += factor1 * factor2
+        if enabled:
+            answer_p2 += factor1 * factor2
+
+
+
+
 
 
 
