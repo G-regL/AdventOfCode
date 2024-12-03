@@ -26,10 +26,33 @@ answer_p2 = 0
 data = open(ARG_data).read().split('\n')
 
 
-# loop through data
-for line in data:
-    pass
+def safe(levels) -> bool:
+    decreasing = [levels[i-1] > v for i,v in enumerate(levels[1:], 1)]
+    increasing = [levels[i-1] < v for i,v in enumerate(levels[1:], 1)]
+    gaps = [0 < abs(levels[i-1] - v) < 4 for i,v in enumerate(levels[1:], 1)]
 
+    debug(f"{levels=}")
+    if (all(decreasing) or all(increasing)) and all(gaps):
+        return True
+    else:
+        return False
+
+# loop through data
+for report in data:
+    levels = list(map(int, report.split()))
+    if safe(levels):
+        debug("Safe P1")
+        answer_p1 += 1
+
+    for r in range (len(report)):
+        #create a new report, with a single level removed, and see if it's safe
+        new_levels = levels[:r] + levels[r + 1 :]
+
+        debug(f"{levels=}, {new_levels=}")
+        if safe(new_levels):
+            debug("Safe P2")
+            answer_p2 += 1
+            break
 
 # Print out the answers
 print(f"\33[32m__P1__ : \33[1m{answer_p1}\33[0m")
