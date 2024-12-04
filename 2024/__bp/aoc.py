@@ -32,8 +32,8 @@ for line in data:
 
 
 # Print out the answers
-print(f"\33[32m__P1__ : \33[1m{answer_p1}\33[0m")
-print(f"\33[32m__P2__ : \33[1m{answer_p2}\33[0m")
+print(f"\33[32m__P1__: \33[1m{answer_p1}\33[0m")
+print(f"\33[32m__P2__: \33[1m{answer_p2}\33[0m")
 
 # Tell me how inefficecient my code is
-print("\33[35mTook \33[1;35m{}\33[0m\33[35m seconds to run\33[0m".format(time.process_time_ns() / 1000000000))
+print(f"\33[35mTook \33[1;35m{time.process_time_ns() / 1000000000}\33[0m\33[35m seconds to run\33[0m")
