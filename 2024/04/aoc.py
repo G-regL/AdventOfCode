@@ -25,7 +25,6 @@ answer_p2 = 0
 # read input data and split into list of lines
 grid = open(ARG_data).read().split('\n')
 
-
 directions = {
     "N": [(-1,0),(-2,0),(-3,0)],
     "S": [(1,0),(2,0),(3,0)],
@@ -41,27 +40,33 @@ line_max = len(grid[0]) - 1
 row_max = len(grid) - 1
 
 for ri, row in enumerate(grid):
-    #print(f"{ri=}; {row=}")
     for ci,letter in enumerate(row):
-        #print(f"{li=}; {letter=}")
+        #Part 1
         if grid[ri][ci] == "X":
-            #print(f"Found X at ({ri}, {li})")
-            for dir, cardinal in directions.items():
-                l1, l2, l3 = None, None, None
+            debug(f"Found X at ({ri:3},{ci:3})")
+            for cardinal, dir in directions.items():
+                # check if we're in-bounds
                 if (
-                    (0 <= (ri + cardinal[0][0]) <= row_max and 0 <= (ri + cardinal[1][0]) <= row_max and 0 <= (ri + cardinal[2][0]) <= row_max) and
-                    (0 <= (ci + cardinal[0][1]) <= line_max and 0 <= (ci + cardinal[1][1]) <= line_max and 0 <= (ci + cardinal[2][1]) <= line_max)
+                    (0 <= (ri + dir[0][0]) <= row_max and 0 <= (ri + dir[1][0]) <= row_max and 0 <= (ri + dir[2][0]) <= row_max) and
+                    (0 <= (ci + dir[0][1]) <= line_max and 0 <= (ci + dir[1][1]) <= line_max and 0 <= (ci + dir[2][1]) <= line_max)
                 ):
-                    l1 = grid[ri + cardinal[0][0]][ci + cardinal[0][1]]
-                    l2 = grid[ri + cardinal[1][0]][ci + cardinal[1][1]]
-                    l3 = grid[ri + cardinal[2][0]][ci + cardinal[2][1]]
-
-                    if ( l1 == "M" and l2 == "A" and l3 == "S"):
-                        debug(f"Found XMAS going {dir} from ({ri},{ci})")
-                        l = f"  XMAS = {grid[ri][ci]}({ri},{ci}); {l1}({ri + cardinal[0][0]},{ci + cardinal[0][1]}); "
-                        l += f"{l2}({ri + cardinal[1][0]},{ci + cardinal[1][1]}); {l3}({ri + cardinal[2][0]},{ci + cardinal[2][1]})"
-                        debug(l)
+                    # Have we found MAS?
+                    if (grid[ri + dir[0][0]][ci + dir[0][1]] == "M" and 
+                        grid[ri + dir[1][0]][ci + dir[1][1]] == "A" and 
+                        grid[ri + dir[2][0]][ci + dir[2][1]] == "S"):
+                        debug(f"  XMAS going {cardinal}")
                         answer_p1 += 1
+
+for ri, row in enumerate(grid[1:]):
+    for ci,letter in enumerate(row[1:]):
+        # Part 2
+        if grid[ri][ci] == "A":
+            debug(f"Found A at ({ri:3},{ci:3})")
+            # See if the letters in the opposite corners make an X-MAS
+            if (grid[ri + -1][ci + -1] + grid[ri + 1][ci + 1] in ["MS", "SM"] and 
+                grid[ri + -1][ci + 1] + grid[ri + 1][ci + -1] in ["MS", "SM"]):
+                debug(f"  X-MAS!")
+                answer_p2 += 1
 
 
 # Print out the answers
