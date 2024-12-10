@@ -22,13 +22,25 @@ def debug(thing):
 answer_p1 = 0
 answer_p2 = 0
 
-# read input data and split into list of lines
-data = open(ARG_data).read().split('\n')
+#INPUT
+# #Generate single list of lines
+# data = open(ARG_data).read().split('\n')
+
+# #Generate a 2d matrix for a grid, including 
+# #In/out of range checks are done with in_grid(row, column)
+# grid = [list(map(int, list(row))) for row in data]
+# limits = (len(grid[0]), len(grid))
+# def in_grid(row, col) -> bool:
+#     global limits
+#     return 0 <= row < limits[0] and 0 <= col < limits[1]
+
+# #Same, but using a dictionary, with keys being (row, column) tuples
+# #Makes in/out of range checks dead simple, using grid.get((r,c))
+# #    None if it doesn't exist, value otherwise
+# grid = {(r,c): int(char) for r, row in enumerate(data) for c, char in enumerate(row)}
 
 
-# loop through data
-for line in data:
-    pass
+# Do things!!
 
 
 # Print out the answers
