@@ -41,7 +41,45 @@ answer_p2 = 0
 
 
 # Do things!!
+stones = list(map(int, open(ARG_data).read().split(' ')))
 
+
+#This was the original Part 1 solution
+# It works perfectly, but is a bit slow.
+# Doesn't scale beyond about 40 blinks (and even that takes over 45 seconds)
+# for blink in range(25):
+#     new_stones = []
+#     #print(stones)
+#     for stone in stones:
+#         if stone == 0:
+#             new_stones.append(1)
+#         elif len(str(stone)) % 2 == 0:
+#             ss = str(stone)
+#             new_stones.append(int(ss[:len(ss)//2]))
+#             new_stones.append(int(ss[len(ss)//2:]))
+#         else:
+#             new_stones.append(stone * 2024)
+#     stones = new_stones
+
+from functools import cache
+@cache
+def count_stones(stone, blink):
+    if blink == 0:
+        return 1
+    if stone == 0:
+        return count_stones(1, blink - 1)
+    elif len(str(stone)) % 2 == 0:
+        ss = str(stone)
+        l = len(ss)
+        return count_stones(int(ss[:l//2]), blink - 1) + count_stones(int(ss[l//2:]), blink - 1)
+        new_stones.append(int(ss[int(len(ss)/2):]))
+    else:
+        return count_stones(stone * 2024, blink - 1)
+    
+
+answer_p1 = sum(count_stones(stone, 25) for stone in stones)
+
+answer_p2 = sum(count_stones(stone, 75) for stone in stones)
 
 # Print out the answers
 print(f"\33[32m__P1__: \33[1m{answer_p1}\33[0m")
