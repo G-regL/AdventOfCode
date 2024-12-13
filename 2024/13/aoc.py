@@ -25,8 +25,8 @@ answer_p2 = 0
 #INPUT
 import re
 
-for mr in open(ARG_data).read().split('\n\n'):
-    a, b, p = mr.split('\n')
+for machine in open(ARG_data).read().split('\n\n'):
+    a, b, p = machine.split('\n')
 
     ax, ay = map(int, re.match(r'Button A: X\+(\d+), Y\+(\d+)', a).groups())
     bx, by = map(int, re.match(r'Button B: X\+(\d+), Y\+(\d+)', b).groups())
