@@ -48,15 +48,15 @@ for m in machines:
     ay = m["b"][0] * m["a"][1]
     ap = m["p"][0] * m["a"][1]
     ap2 = (m["p2"][0]) * m["a"][1]
-    debug(ax, ay, ap)
+    debug(f"{ax=}, {ay=}, {ap=}")
 
     bx = m["a"][1] * m["a"][0]
     by = m["b"][1] * m["a"][0]
     bp = m["p"][1] * m["a"][0]
     bp2 = (m["p2"][1]) * m["a"][0]
-    debug(bx,by, bp)
+    debug(f"{bx=}, {by=}, {bp=}")
 
-    debug(by - ay, bp - ap)
+    debug(f"{(by - ay)=}, {(bp - ap)=}")
 
     a_presses = (bp - ap) / (by - ay)
     a2_presses = (bp2 - ap2) / (by - ay)
