@@ -24,11 +24,8 @@ answer_p2 = 0
 
 #INPUT
 import re
-from math import gcd
-machines_raw = open(ARG_data).read().split('\n\n')
 
-machines = []
-for mr in machines_raw:
+for mr in open(ARG_data).read().split('\n\n'):
     a, b, p = mr.split('\n')
 
     ax, ay = map(int, re.match(r'Button A: X\+(\d+), Y\+(\d+)', a).groups())
@@ -36,34 +33,13 @@ for mr in machines_raw:
     px, py = map(int, re.match(r'Prize: X=(\d+), Y=(\d+)', p).groups())
     px2, py2 = px + 10000000000000, py + 10000000000000
 
-    ax_ay = ax * ay
-    bx_ay = bx * ay
-    px_ay = px * ay
-    p2x_ay = px2 * ay
-    debug(f"{ax_ay=}, {bx_ay=}, {px_ay=}")
-
-    ay_ax = ay * ax
-    by_ax = by * ax
-    py_ax = py * ax
-    p2y_ax = py2 * ax
-    debug(f"{ay_ax=}, {by_ax=}, {py_ax=}")
-
-    debug(f"{(by_ax - bx_ay)=}, {(py_ax - px_ay)=}")
-
-    b_presses = (py_ax - px_ay) / (by_ax - bx_ay)
-    b2_presses = (p2y_ax - p2x_ay) / (by_ax - bx_ay)
-    debug(f"{b_presses=}, {b_presses.is_integer()=}")
-
-
-    bx_b = bx * b_presses
-    bx_b2 = bx * b2_presses
-    a_presses = (px - bx_b) / ax
-    a2_presses = (px2 - bx_b2) / ax
-    debug(f"{a_presses=}, {a_presses.is_integer()=}")
-
+    b_presses = (py * ax - px * ay) / (by * ax - bx * ay)
+    a_presses = (px - bx * b_presses) / ax
     if a_presses.is_integer() and b_presses.is_integer():
         answer_p1 += b_presses + a_presses * 3 
 
+    b2_presses = (py2 * ax - px2 * ay) / (by * ax - bx * ay)
+    a2_presses = (px2 - bx * b2_presses) / ax
     if a2_presses.is_integer() and b2_presses.is_integer():
         answer_p2 += b2_presses + a2_presses * 3 
 
