@@ -48,27 +48,26 @@ for m in machines:
     ay = m["b"][0] * m["a"][1]
     ap = m["p"][0] * m["a"][1]
     ap2 = (m["p2"][0]) * m["a"][1]
-    #print(ax, ay, ap)
+    debug(ax, ay, ap)
 
     bx = m["a"][1] * m["a"][0]
     by = m["b"][1] * m["a"][0]
     bp = m["p"][1] * m["a"][0]
     bp2 = (m["p2"][1]) * m["a"][0]
-    #print(bx,by, bp)
+    debug(bx,by, bp)
 
-    #print(by - ay, bp - ap)
+    debug(by - ay, bp - ap)
 
     a_presses = (bp - ap) / (by - ay)
     a2_presses = (bp2 - ap2) / (by - ay)
 
-    #print(f"{a_presses=}, {a_presses.is_integer()=}")
+    debug(f"{a_presses=}, {a_presses.is_integer()=}")
 
     bx_a = m["b"][0] * a_presses
     bx_a2 = m["b"][0] * a2_presses
-    #print(m["b"][0], bx_a, m["p"][0])
     b_presses = (m["p"][0] - bx_a) / m["a"][0]
     b2_presses = (m["p2"][0] - bx_a2) / m["a"][0]
-    #print(f"{b_presses=}, {b_presses.is_integer()=}")
+    debug(f"{b_presses=}, {b_presses.is_integer()=}")
 
     if a_presses.is_integer() and b_presses.is_integer():
         answer_p1 += b_presses * 3 + a_presses
