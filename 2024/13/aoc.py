@@ -44,36 +44,36 @@ for mr in machines_raw:
     machines.append(m)
 
 for m in machines:
-    ax = m["a"][0] * m["a"][1]
-    ay = m["b"][0] * m["a"][1]
-    ap = m["p"][0] * m["a"][1]
-    ap2 = (m["p2"][0]) * m["a"][1]
-    debug(f"{ax=}, {ay=}, {ap=}")
+    ax_ay = m["a"][0] * m["a"][1]
+    bx_ay = m["b"][0] * m["a"][1]
+    px_ay = m["p"][0] * m["a"][1]
+    p2x_ay = (m["p2"][0]) * m["a"][1]
+    debug(f"{ax_ay=}, {bx_ay=}, {px_ay=}")
 
-    bx = m["a"][1] * m["a"][0]
-    by = m["b"][1] * m["a"][0]
-    bp = m["p"][1] * m["a"][0]
-    bp2 = (m["p2"][1]) * m["a"][0]
-    debug(f"{bx=}, {by=}, {bp=}")
+    ay_ax = m["a"][1] * m["a"][0]
+    by_ax = m["b"][1] * m["a"][0]
+    py_ax = m["p"][1] * m["a"][0]
+    p2y_ax = (m["p2"][1]) * m["a"][0]
+    debug(f"{ay_ax=}, {by_ax=}, {py_ax=}")
 
-    debug(f"{(by - ay)=}, {(bp - ap)=}")
+    debug(f"{(by_ax - bx_ay)=}, {(py_ax - px_ay)=}")
 
-    a_presses = (bp - ap) / (by - ay)
-    a2_presses = (bp2 - ap2) / (by - ay)
-
-    debug(f"{a_presses=}, {a_presses.is_integer()=}")
-
-    bx_a = m["b"][0] * a_presses
-    bx_a2 = m["b"][0] * a2_presses
-    b_presses = (m["p"][0] - bx_a) / m["a"][0]
-    b2_presses = (m["p2"][0] - bx_a2) / m["a"][0]
+    b_presses = (py_ax - px_ay) / (by_ax - bx_ay)
+    b2_presses = (p2y_ax - p2x_ay) / (by_ax - bx_ay)
     debug(f"{b_presses=}, {b_presses.is_integer()=}")
 
+
+    bx_a = m["b"][0] * b_presses
+    bx_a2 = m["b"][0] * b2_presses
+    a_presses = (m["p"][0] - bx_a) / m["a"][0]
+    a2_presses = (m["p2"][0] - bx_a2) / m["a"][0]
+    debug(f"{a_presses=}, {a_presses.is_integer()=}")
+
     if a_presses.is_integer() and b_presses.is_integer():
-        answer_p1 += b_presses * 3 + a_presses
+        answer_p1 += b_presses + a_presses * 3 
 
     if a2_presses.is_integer() and b2_presses.is_integer():
-        answer_p2 += b2_presses * 3 + a2_presses
+        answer_p2 += b2_presses + a2_presses * 3 
 
 
 # Print out the answers
@@ -82,3 +82,55 @@ print(f"\33[32m__P2__: \33[1m{int(answer_p2)}\33[0m")
 
 # Tell me how inefficecient my code is
 print(f"\33[35mTook \33[1;35m{time.process_time_ns() / 1000000000}\33[0m\33[35m seconds to run\33[0m")
+
+
+# You want to reach a point (Prize) whose coordinates are given by `X=8400` and `Y=5400`. You can move towards this point by pressing two buttons that move a pointer:
+
+# - Button A moves the pointer by `X+94` and `Y+34` for each press.
+# - Button B moves the pointer by `X+22` and `Y+67` for each press.
+
+# To find how many times you need to press each button, let's set up a system of equations where `a` is the number of times you press Button A and `b` is the number of times you press Button B:
+
+# ```
+# 94a + 22b = 8400  (Equation 1: X-coordinates)
+# 34a + 67b = 5400  (Equation 2: Y-coordinates)
+# ```
+
+# To solve this system of equations, you can use methods like substitution or elimination. I'll use the elimination method:
+
+# 1. Multiply Equation 1 by 34 and Equation 2 by 94 (we choose these numbers based on the coefficients of `a` in the original equations) to eliminate variable `a`:
+
+# ```
+# 3196a + 748b = 285600  (Equation 1)
+# 3196a + 6298b = 507600  (Equation 2)
+# ```
+
+# 2. Subtract Equation 1 from Equation 2 to eliminate `a`:
+
+# ```
+# 6298b - 748b = 507600 - 285600
+# 5550b = 222000
+# ```
+
+# 3. Solve for `b`:
+
+# ```
+# b = 222000 / 5550
+# b = 40
+# ```
+
+# 4. Substitute the value of `b` into Equation 1 to find `a`:
+
+# ```
+# 94a + 22*40 = 8400
+# 94a + 880 = 8400
+# 94a = 8400 - 880
+# 94a = 7520
+# ```
+
+# ```
+# a = 7520 / 94
+# a = 80
+# ```
+
+# Therefore, you need to press Button A `80` times and Button B `40` times to reach the X and Y coordinates of the Prize.
