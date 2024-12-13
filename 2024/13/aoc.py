@@ -31,29 +31,21 @@ machines = []
 for mr in machines_raw:
     a, b, p = mr.split('\n')
 
-    a = re.match(r'Button A: X\+(\d+), Y\+(\d+)', a).groups()
-    b = re.match(r'Button B: X\+(\d+), Y\+(\d+)', b).groups()
-    p = re.match(r'Prize: X=(\d+), Y=(\d+)', p).groups()
-    m = {
-        "a": tuple(map(int, a)),
-        "b": tuple(map(int, b)),
-        "p": tuple(map(int, p)),
-    }
-    m["p2"] = (m["p"][0] + 10000000000000, m["p"][1] + 10000000000000)
+    ax, ay = map(int, re.match(r'Button A: X\+(\d+), Y\+(\d+)', a).groups())
+    bx, by = map(int, re.match(r'Button B: X\+(\d+), Y\+(\d+)', b).groups())
+    px, py = map(int, re.match(r'Prize: X=(\d+), Y=(\d+)', p).groups())
+    px2, py2 = px + 10000000000000, py + 10000000000000
 
-    machines.append(m)
-
-for m in machines:
-    ax_ay = m["a"][0] * m["a"][1]
-    bx_ay = m["b"][0] * m["a"][1]
-    px_ay = m["p"][0] * m["a"][1]
-    p2x_ay = (m["p2"][0]) * m["a"][1]
+    ax_ay = ax * ay
+    bx_ay = bx * ay
+    px_ay = px * ay
+    p2x_ay = px2 * ay
     debug(f"{ax_ay=}, {bx_ay=}, {px_ay=}")
 
-    ay_ax = m["a"][1] * m["a"][0]
-    by_ax = m["b"][1] * m["a"][0]
-    py_ax = m["p"][1] * m["a"][0]
-    p2y_ax = (m["p2"][1]) * m["a"][0]
+    ay_ax = ay * ax
+    by_ax = by * ax
+    py_ax = py * ax
+    p2y_ax = py2 * ax
     debug(f"{ay_ax=}, {by_ax=}, {py_ax=}")
 
     debug(f"{(by_ax - bx_ay)=}, {(py_ax - px_ay)=}")
@@ -63,10 +55,10 @@ for m in machines:
     debug(f"{b_presses=}, {b_presses.is_integer()=}")
 
 
-    bx_b = m["b"][0] * b_presses
-    bx_b2 = m["b"][0] * b2_presses
-    a_presses = (m["p"][0] - bx_b) / m["a"][0]
-    a2_presses = (m["p2"][0] - bx_b2) / m["a"][0]
+    bx_b = bx * b_presses
+    bx_b2 = bx * b2_presses
+    a_presses = (px - bx_b) / ax
+    a2_presses = (px2 - bx_b2) / ax
     debug(f"{a_presses=}, {a_presses.is_integer()=}")
 
     if a_presses.is_integer() and b_presses.is_integer():
