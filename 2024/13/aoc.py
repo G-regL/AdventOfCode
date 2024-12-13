@@ -63,10 +63,10 @@ for m in machines:
     debug(f"{b_presses=}, {b_presses.is_integer()=}")
 
 
-    bx_a = m["b"][0] * b_presses
-    bx_a2 = m["b"][0] * b2_presses
-    a_presses = (m["p"][0] - bx_a) / m["a"][0]
-    a2_presses = (m["p2"][0] - bx_a2) / m["a"][0]
+    bx_b = m["b"][0] * b_presses
+    bx_b2 = m["b"][0] * b2_presses
+    a_presses = (m["p"][0] - bx_b) / m["a"][0]
+    a2_presses = (m["p2"][0] - bx_b2) / m["a"][0]
     debug(f"{a_presses=}, {a_presses.is_integer()=}")
 
     if a_presses.is_integer() and b_presses.is_integer():
