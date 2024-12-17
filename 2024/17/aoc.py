@@ -22,25 +22,88 @@ def debug(thing):
 answer_p1 = 0
 answer_p2 = 0
 
-#INPUT
-# #Generate single list of lines
-# data = open(ARG_data).read().split('\n')
+import re
 
-# #Generate a 2d matrix for a grid, including 
-# #In/out of range checks are done with in_grid(row, column)
-# grid = [list(map(int, list(row))) for row in data]
-# limits = (len(grid[0]), len(grid))
-# def in_grid(row, col) -> bool:
-#     global limits
-#     return 0 <= row < limits[0] and 0 <= col < limits[1]
+registers, program = open(ARG_data).read().split('\n\n')
 
-# #Same, but using a dictionary, with keys being (row, column) tuples
-# #Makes in/out of range checks dead simple, using grid.get((r,c))
-# #    None if it doesn't exist, value otherwise
-# grid = {(r,c): int(char) for r, row in enumerate(data) for c, char in enumerate(row)}
+ra, rb, rc = list(map(int,re.findall(r'(\d+)\n.*(\d+)\n.*(\d+)', registers)[0]))
+program = list(map(int,re.findall(r'([\d,]+)', program)[0].split(",")))
+
+# ra, rb, rc = 0, 2024, 43690
+# program = [4,0]
+
+def computer(program, ra, rb, rc):
+    def combo(operand):
+        if operand < 4:
+            return operand
+        if operand == 4:
+            return ra
+        if operand == 5:
+            return rb
+        if operand == 6:
+            return rc
 
 
-# Do things!!
+    pointer = 0
+    output = []
+
+    while pointer < len(program):
+        opcode = program[pointer]
+        operand = program[pointer+1]
+
+        #print(f"{opcode=}; {operand=}; {combo(operand)=}; {pointer=}; {ra=}; {rb=}; {rc=}")
+        match opcode:
+            # adv (division ra/combo, write to ra)
+            case 0:
+                #print("ra = ra // pow(2, combo(operand))")
+                ra = ra // pow(2, combo(operand))
+
+            # bxl (bitwise XOR of rb and literal operand, write to rb)
+            case 1:
+                #print("rb = rb ^ operand")
+                rb = rb ^ operand
+
+            # bst (modulo 8 of combo operand, write to rb)
+            case 2:
+                #print("rb = combo(operand) % 8")
+                rb = combo(operand) % 8
+
+            # jnz (nothing if ra == 0; set pointer to literal operand; don't increase pointer by 2)
+            case 3:
+                #print("set pointer to operand if ra != 0")
+                if ra != 0:
+                    pointer = operand
+                    continue # skip to next opcode, without incrementing pointer at bottom of running loop
+
+            # bxc (bitwise XOR of rb and rc, writes to rb; doesn't use operand)
+            case 4:
+                #print("rb = rb ^ rc")
+                rb = rb ^ rc
+
+            # out (modulo 8 of combo operand, writes to output)
+            case 5:
+                #print("output.append(combo(operand) % 8)")
+                output.append(combo(operand) % 8)
+
+            # bdv (division ra/combo, write to rb)
+            case 6:
+                #print("rb = ra // pow(2, combo(operand))")
+                rb = ra // pow(2, combo(operand))
+            
+            # cdv (division ra/combo, write to rc)
+            case 7:
+                #print("rc = ra // pow(2, combo(operand))")
+                rc = ra // pow(2, combo(operand))
+
+
+        pointer += 2
+        #print(f"{pointer=}; {ra=}; {rb=}; {rc=}")
+        #print("")
+    
+    return output
+
+
+answer_p1 = ",".join(list(map(str,computer( program, ra, rb, rc))))
 
 
 # Print out the answers
