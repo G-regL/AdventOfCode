@@ -22,30 +22,37 @@ def debug(thing):
 answer_p1 = 0
 answer_p2 = 0
 
-#INPUT
-# #Generate single list of lines
-# data = open(ARG_data).read().split('\n')
+from functools import cache
 
-# #Generate a 2d matrix for a grid, including 
-# #In/out of range checks are done with in_grid(row, column)
-# grid = [list(map(int, list(row))) for row in data]
-# limits = (len(grid[0]), len(grid))
-# def in_grid(row, col) -> bool:
-#     global limits
-#     return 0 <= row < limits[0] and 0 <= col < limits[1]
+towels, designs = open(ARG_data).read().split('\n\n')
 
-# #Same, but using a dictionary, with keys being (row, column) tuples
-# #Makes in/out of range checks dead simple, using grid.get((r,c))
-# #    None if it doesn't exist, value otherwise
-# grid = {(r,c): int(char) for r, row in enumerate(data) for c, char in enumerate(row)}
+towels = towels.split(", ")
+designs = designs.split("\n")
 
+#towels.sort(key=len,reverse=True)
 
-# Do things!!
+@cache
+def check_pattern(design):
+    #print(design)
+    if design == "":
+        return 1
+    
+    total = 0
+    for t in towels:
+        if design.startswith(t):
+            total += check_pattern(design[len(t):])
+            
+    return total
 
+possible = [check_pattern(d) for d in designs]
+
+answer_p1 = sum([1 for p in possible if p])
+answer_p2 = sum(possible)
 
 # Print out the answers
 print(f"\33[32m__P1__: \33[1m{answer_p1}\33[0m")
 print(f"\33[32m__P2__: \33[1m{answer_p2}\33[0m")
 
 # Tell me how inefficecient my code is
-print(f"\33[35mTook \33[1;35m{time.process_time_ns() / 1000000000}\33[0m\33[35m seconds to run\33[0m")
+#print(f"\33[35mTook \33[1;35m{time.process_time_ns() / 1000000000}\33[0m\33[35m seconds to run\33[0m")
+print(f"\33[35mTook {time.process_time_ns() / 1000000000}\33[35m seconds to run\33[0m")
