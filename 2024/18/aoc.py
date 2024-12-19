@@ -64,6 +64,11 @@ def bfs(bytes, grid_size):
                 #print(f"({len(path)}) smaller than {shortest=}")
                 shortest_path = path
                 shortest = len(path)
+        
+        if (row, column) in bytes or (row, column) in seen:
+            continue
+
+        seen.add((row, column))
 
         for (dr, dc) in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             row_new, column_new = row + dr, column + dc
@@ -71,10 +76,7 @@ def bfs(bytes, grid_size):
                 #print(f"dir ({row_new},{column_new}) out of bounds")
                 continue
             
-            if (row_new, column_new) in bytes or (row_new, column_new) in seen:
-                continue
 
-            seen.add((row_new, column_new))
 
             if (row_new, column_new) not in path:
                 new_path = set(path)
@@ -100,6 +102,8 @@ while low < high:
         high = mid
     else:
         low = mid + 1
+
+
 
 
 answer_p2 = f"{bytes[low -1][1]},{bytes[low -1][0]}"
