@@ -19,30 +19,31 @@ def debug(thing):
     if ARG_debugLogging:
         print(f"\33[39mDEBUG:\33[0m {thing}")
 
-answer_p1 = 0
-answer_p2 = 0
-
 #INPUT
 productIDs = [r.split("-") for r in open('input.txt').read().split(',')]
 
 # Do things!!
-invalid = []
+invalid_p1 = set()
+invalid_p2 = set()
+
 for start,end in productIDs:
     debug(f"Range {start}-{end}")
     for pid in range(int(start), int(end)+1):
         debug(f"  {pid}")
         pid = str(pid)
-        if len(pid) % 2 != 0:
-            continue
         half = int(len(pid) / 2)
         debug(f"    {half}")
         debug(f"    {pid[:half]} <> {pid[half:]}")
-        if pid[:half] == pid[half:]:
-            invalid.append(pid)
+        if len(pid) % 2 == 0 and pid[:half] == pid[half:]:
+            invalid_p1.add(pid)
         
-
-debug(invalid)
-answer_p1 = sum(list(map(int,invalid)))
+        for chars in range(1, int(len(pid) / 2) + 1):
+            if pid.count(pid[0:chars]) * chars == len(pid):
+                debug("    whole pid is pattern?")
+                invalid_p2.add(pid)
+        
+answer_p1 = sum(list(map(int,invalid_p1)))
+answer_p2 = sum(list(map(int,invalid_p2)))
 
 # Print out the answers
 print(f"\33[32m__P1__: \33[1m{answer_p1}\33[0m")
