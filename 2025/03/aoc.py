@@ -23,25 +23,23 @@ answer_p1 = 0
 answer_p2 = 0
 
 #INPUT
-# #Generate single list of lines
-# data = open(ARG_data).read().split('\n')
-
-# #Generate a 2d matrix for a grid, including 
-# #In/out of range checks are done with in_grid(row, column)
-# grid = [list(map(int, list(row))) for row in data]
-# limits = (len(grid[0]), len(grid))
-# def in_grid(row, col) -> bool:
-#     global limits
-#     return 0 <= row < limits[0] and 0 <= col < limits[1]
-
-# #Same, but using a dictionary, with keys being (row, column) tuples
-# #Makes in/out of range checks dead simple, using grid.get((r,c))
-# #    None if it doesn't exist, value otherwise
-# grid = {(r,c): int(char) for r, row in enumerate(data) for c, char in enumerate(row)}
-
+banks = open('input.txt').read().split('\n')
 
 # Do things!!
+for bank in banks:
+    jolts = "0"
+    for b in range(0, len(bank) -1):
+        if bank[b]> jolts:
+            jolts = bank[b]
+    #print(jolts)
 
+    jolts += "0"
+    for b in range(bank.find(jolts[0]) + 1, len(bank)):
+        if bank[b] > jolts[1]:
+            jolts = jolts[0] + bank[b]
+
+    #print(jolts)
+    answer_p1 += int(jolts)
 
 # Print out the answers
 print(f"\33[32m__P1__: \33[1m{answer_p1}\33[0m")
