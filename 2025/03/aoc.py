@@ -31,14 +31,12 @@ for bank in banks:
     for b in range(0, len(bank) -1):
         if bank[b]> jolts:
             jolts = bank[b]
-    #print(jolts)
 
     jolts += "0"
     for b in range(bank.find(jolts[0]) + 1, len(bank)):
         if bank[b] > jolts[1]:
             jolts = jolts[0] + bank[b]
 
-    #print(jolts)
     answer_p1 += int(jolts)
 
 # Print out the answers
