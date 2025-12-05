@@ -19,8 +19,6 @@ def debug(thing):
     if ARG_debugLogging:
         print(f"\33[39mDEBUG:\33[0m {thing}")
 
-answer_p1 = 0
-answer_p2 = 0
 
 #INPUT
 data = open('input.txt').read().split('\n')
@@ -30,21 +28,36 @@ grid = {(r,c): char for r, row in enumerate(data) for c, char in enumerate(row)}
 directions = [(0, -1), (-1,-1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)]
 
 # Do things!!
-for (row, col), cell in grid.items():
-    if cell == ".":
-        continue
+forklift_rolls = 0
+rolls_removed = set()
 
-    rolls_seen = 0
-    for dc, dr in directions:
-        if rolls_seen > 4:
-            break;
+previous_removed = -1
+iterations = 0
+while len(rolls_removed) != previous_removed:
+    iterations += 1
+    previous_removed = len(rolls_removed)
+    for (row, col), cell in grid.items():
+        if cell == ".":
+            continue
         
-        look = (row + dr, col + dc)
-        if look in grid and grid[look] == "@":
-            rolls_seen += 1
+        rolls_seen_p1 = 0 
+        rolls_seen_p2 = 0
+        
+        for dc, dr in directions:    
+            look = (row + dr, col + dc)
+            if look in grid and grid[look] == "@":
+                rolls_seen_p1 += 1
+                if look not in rolls_removed:
+                    rolls_seen_p2 += 1
 
-    if rolls_seen < 4:
-        answer_p1 += 1
+        if rolls_seen_p1 < 4 and iterations == 1:
+            forklift_rolls += 1
+        if rolls_seen_p2 < 4:
+            rolls_removed.add((row, col))
+
+
+answer_p1 = forklift_rolls
+answer_p2 = len(rolls_removed)
 
 # Print out the answers
 print(f"\33[32m__P1__: \33[1m{answer_p1}\33[0m")
