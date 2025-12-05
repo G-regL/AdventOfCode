@@ -1,3 +1,17 @@
 {
-    "go.inferGopath": false
+    "go.inferGopath": false,
+    "python.languageServer": "None",
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+
+    },
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "notebook.formatOnSave.enabled": true,
+    "notebook.codeActionsOnSave": {
+        "notebook.source.organizeImports": "explicit"
+    }
 }
